@@ -1,0 +1,28 @@
+digraph G
+{
+label="List";
+ labelloc="t";
+ fontsize=30
+ fontname="Verdana";
+ fontcolor="#FFFFFF"
+
+rankdir=LR; splines=ortho; size="200,300"; bgcolor="#ffd480";
+{ node_0x503000000040 [shape = record; style="rounded, filled", fillcolor="#ff6699", color="#FFE9C7", label=" { Phantom } | { data: BADBABA } | { <curr0x503000000040> curr: 0x503000000040 } | { { <prev0x503000000040> prev: 0x503000000160 } | { <next0x503000000040> next: 0x503000000100 } }  "] 
+}
+node_0x503000000100 [shape = record; style="rounded, filled", fillcolor="#9966FF", color="#FFE9C7", label=" { <num0> num: 0 } | { <data11.00> data: 11.00 } | { <curr0x503000000100> curr: 0x503000000100 } | { { <prev0x503000000100> prev: 0x503000000040 } | { <next0x503000000100> next: 0x503000000130 } }  "] 
+node_0x503000000130 [shape = record; style="rounded, filled", fillcolor="#9966FF", color="#FFE9C7", label=" { <num1> num: 1 } | { <data22.00> data: 22.00 } | { <curr0x503000000130> curr: 0x503000000130 } | { { <prev0x503000000130> prev: 0x503000000100 } | { <next0x503000000130> next: 0x503000000190 } }  "] 
+node_0x503000000190 [shape = record; style="rounded, filled", fillcolor="#9966FF", color="#FFE9C7", label=" { <num2> num: 2 } | { <data67.00> data: 67.00 } | { <curr0x503000000190> curr: 0x503000000190 } | { { <prev0x503000000190> prev: 0x503000000130 } | { <next0x503000000190> next: 0x503000000160 } }  "] 
+node_0x503000000160 [shape = record; style="rounded, filled", fillcolor="#9966FF", color="#FFE9C7", label=" { <num3> num: 3 } | { <data33.00> data: 33.00 } | { <curr0x503000000160> curr: 0x503000000160 } | { { <prev0x503000000160> prev: 0x503000000190 } | { <next0x503000000160> next: 0x503000000040 } }  "] 
+
+node_0x503000000040 -> node_0x503000000100 [color ="#ff6699"];
+node_0x503000000040 -> node_0x503000000160 [color ="#34cb34"];
+node_0x503000000100 -> node_0x503000000130 [color ="#ff6699"];
+node_0x503000000100 -> node_0x503000000040 [color ="#34cb34"];
+node_0x503000000130 -> node_0x503000000190 [color ="#ff6699"];
+node_0x503000000130 -> node_0x503000000100 [color ="#34cb34"];
+node_0x503000000190 -> node_0x503000000160 [color ="#ff6699"];
+node_0x503000000190 -> node_0x503000000130 [color ="#34cb34"];
+node_0x503000000160 -> node_0x503000000040 [color ="#ff6699"];
+node_0x503000000160 -> node_0x503000000190 [color ="#34cb34"];
+
+}
