@@ -32,10 +32,12 @@ ListInfo_t ListDtor (List_t* list)
 
     while( curr_node->next != list )
     {
-        free( curr_node );
+        free (curr_node);
         curr_node = next_node;
         next_node = next_node->next;
     }
+
+    free (curr_node);
 
     return kGoodList;
 }
@@ -45,7 +47,7 @@ List_t* GetNode (List_t* list, int number)
 {
     List_t* curr_node = list;
 
-    for( int i = 0; i < number + 1; i++ ) //TODO: по-хорошему сюда проверку на то, что номер элемента не больше, чем последний + 1
+    for( int i = 0; i < number; i++ ) //TODO: по-хорошему сюда проверку на то, что номер элемента не больше, чем последний + 1
     {
         curr_node = curr_node->next; 
     }

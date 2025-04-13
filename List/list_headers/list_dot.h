@@ -6,7 +6,7 @@
 #ifndef LIST_DOT_HEADER
 #define LIST_DOT_HEADER
 
-const char project_directory[100] = "/home/vyacheslav/StandartList/list_dump/";
+const char project_directory[100] = "/home/vyacheslav/HashTable/List/list_dump/";
 
 const char output_image_name[40] = "TreeGraph.svg";
 const char output_graph_name[40] = "TreeGraph.dot";

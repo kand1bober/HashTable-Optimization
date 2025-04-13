@@ -66,16 +66,16 @@ ListInfo_t DotDriver (List_t* list, File_text* file)
 ListInfo_t DotCollector (List_t* list, File_text* file)
 {
     //=== Description ===
-    fprintf( file->stream, "{ node_%p [shape = record; style=\"rounded, filled\", fillcolor=\"%s\", color=\"%s\", label=\" { Phantom } | { data: \"%s\" } | { <curr%p> curr: %p } | { { <prev%p> prev: %p } | { <next%p> next: %p } }  \"] \n}\n",
+    fprintf( file->stream, "{ node_%p [shape = record; style=\"rounded, filled\", fillcolor=\"%s\", color=\"%s\", label=\" { Phantom = 0} | { data: %s } | { <curr%p> curr: %p } | { { <prev%p> prev: %p } | { <next%p> next: %p } }  \"] \n}\n",
                             list, first_fillcolor, default_pointer_color, list->data.string, list, list, list, list->prev, list, list->next );
     //===================
 
     List_t* curr_node = list->next;
-    int nodes_count = 0;
+    int nodes_count = 1;
     while( 1 )
     {
         //=== Description ===
-        fprintf( file->stream, "node_%p [shape = record; style=\"rounded, filled\", fillcolor=\"%s\", color=\"%s\", label=\" { <num%d> num: %d } | { <data%p> data: \"%s\" } | { <curr%p> curr: %p } | { { <prev%p> prev: %p } | { <next%p> next: %p } }  \"] \n", 
+        fprintf( file->stream, "node_%p [shape = record; style=\"rounded, filled\", fillcolor=\"%s\", color=\"%s\", label=\" { <num%d> num: %d } | { <data%p> data: %s } | { <curr%p> curr: %p } | { { <prev%p> prev: %p } | { <next%p> next: %p } }  \"] \n", 
                  curr_node, third_fillcolor, default_pointer_color, nodes_count, nodes_count, curr_node, curr_node->data.string, curr_node, curr_node, curr_node, curr_node->prev, curr_node, curr_node->next );
         //===================
 

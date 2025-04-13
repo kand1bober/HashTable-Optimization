@@ -15,68 +15,30 @@ ListInfo_t Run ()
 
     my_list = ListCtor();
 
-    // ListData_t data = 0;
-    // int number = 0;
+    ListData_t data = {"hello", 0};
+    int number = 0;
 
-    // data = 11;
-    // number = 0;
-    // AddNode( my_list, data, number );
-
-
-    // data = 22;
-    // number = 1;
-    // AddNode( my_list, data, number );
-
-    // data = 33;
-    // number = 2;
-    // AddNode( my_list, data, number );
-
-    // TextListDump( my_list );
-
-    // ListDot( my_list );
-    // getchar();
-
-    // number = 2;
-    // DeleteNode( my_list, number );
-    // ListDot( my_list );
-    // getchar();
-
-    // number = 1;
-    // DeleteNode( my_list, number );
-    // ListDot( my_list );
-    // getchar();
-
-    // number = 0;
-    // DeleteNode( my_list, number );
-    // ListDot( my_list );
-    // getchar();
-
-    // data = 11;
-    // number = 0;
-    // AddNode( my_list, data, number );
-    // ListDot( my_list );
-    // getchar();
+        number = 0;
+        AddNode (my_list, data.string, number);
+        ListDot( my_list );
+        getchar();
 
 
-    // data = 22;
-    // number = 1;
-    // AddNode( my_list, data, number );
-    // ListDot( my_list );
-    // getchar();
+        data = {"man", 0};
+        number = 1;
+        AddNode( my_list, data.string, number );
+        ListDot( my_list );
+        getchar();
 
-    // data = 33;
-    // number = 2;
-    // AddNode( my_list, data, number );
-    // ListDot( my_list );
-    // getchar();
+        DeleteNode (my_list, 1);
+        ListDot( my_list );
+        getchar();
 
-    // data = 67;
-    // number = 2;
-    // AddNode( my_list, data, number );
-    // ListDot( my_list );
-    // getchar();
+        DeleteNode (my_list, 1);
+        ListDot( my_list );
+        getchar();
 
-    ListDtor( my_list );
+        ListDtor( my_list );
 
     return kGoodList;
 }
