@@ -4,12 +4,14 @@
 #ifndef LIST_INFO_HEADER
 #define LIST_INFO_HEADER
 
-    const uint LIST_POISON = 0xBADBABA;
+    const char LIST_POISON[] = "BADBABA";
 
     typedef enum ListInfo
     {
-        GOOD = 52,
-        BAD = 53,
+        kGoodList = 52,
+        kBadList = 53,
+        kNodeFound,
+        kNodeNotFound,
 
     }ListInfo_t;
 

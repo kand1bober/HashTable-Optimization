@@ -1,6 +1,6 @@
-#include "../list_obj/list_dot.h"
+#include "../list_headers/list_dot.h"
 
-int CheckSize_t( size_t number )
+int CheckSize_t (size_t number)
 {
     if( number < 1000000 )
         return 1;
@@ -9,14 +9,14 @@ int CheckSize_t( size_t number )
 }
 
 
-char* GetFilePath( char* filepath, const char* filename )
+char* GetFilePath (char* filepath, const char* filename)
 {
     sprintf(filepath, "%s%s", project_directory, filename);
 
     return filepath;
 }
 
-void MakeOffset( struct File_text* file, int count )
+void MakeOffset (struct File_text* file, int count)
 {
     for(int i = 0; i < count; i++)
     {

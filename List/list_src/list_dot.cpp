@@ -1,6 +1,6 @@
-#include "../list_obj/list_dot.h"
+#include "../list_headers/list_dot.h"
 
-ListInfo_t ListDot( List_t* list )
+ListInfo_t ListDot (List_t* list)
 {
     File_text file = {};
 
@@ -10,11 +10,11 @@ ListInfo_t ListDot( List_t* list )
 
     EndDotOutput( &file );
 
-    return GOOD;
+    return kGoodList;
 }
 
 
-ListInfo_t BeginDotOutput( File_text* file )
+ListInfo_t BeginDotOutput (File_text* file)
 {
     char code_filepath[200] = {};
     GetFilePath( code_filepath, output_graph_name );
@@ -38,11 +38,11 @@ ListInfo_t BeginDotOutput( File_text* file )
     "\nrankdir=LR; splines=ortho; size=\"200,300\"; bgcolor=\"%s\";\n", graph_header, fontname, fontcolor, bgcolor);
     //===========================
 
-    return GOOD;
+    return kGoodList;
 }
 
 
-ListInfo_t EndDotOutput( File_text* file )
+ListInfo_t EndDotOutput (File_text* file)
 {
     fprintf(file->stream, "\n}\n");
     char cmd[256] = {};
@@ -52,22 +52,22 @@ ListInfo_t EndDotOutput( File_text* file )
 
     system( cmd );
 
-    return GOOD;
+    return kGoodList;
 }
 
 
-ListInfo_t DotDriver( List_t* list, File_text* file )
+ListInfo_t DotDriver (List_t* list, File_text* file)
 {   
     DotCollector( list, file );
 
-    return GOOD;
+    return kGoodList;
 }
 
-ListInfo_t DotCollector( List_t* list, File_text* file )
+ListInfo_t DotCollector (List_t* list, File_text* file)
 {
     //=== Description ===
-    fprintf( file->stream, "{ node_%p [shape = record; style=\"rounded, filled\", fillcolor=\"%s\", color=\"%s\", label=\" { Phantom } | { data: %lX } | { <curr%p> curr: %p } | { { <prev%p> prev: %p } | { <next%p> next: %p } }  \"] \n}\n",
-                            list, first_fillcolor, default_pointer_color, ( uint64_t )list->data, list, list, list, list->prev, list, list->next );
+    fprintf( file->stream, "{ node_%p [shape = record; style=\"rounded, filled\", fillcolor=\"%s\", color=\"%s\", label=\" { Phantom } | { data: \"%s\" } | { <curr%p> curr: %p } | { { <prev%p> prev: %p } | { <next%p> next: %p } }  \"] \n}\n",
+                            list, first_fillcolor, default_pointer_color, list->data.string, list, list, list, list->prev, list, list->next );
     //===================
 
     List_t* curr_node = list->next;
@@ -75,8 +75,8 @@ ListInfo_t DotCollector( List_t* list, File_text* file )
     while( 1 )
     {
         //=== Description ===
-        fprintf( file->stream, "node_%p [shape = record; style=\"rounded, filled\", fillcolor=\"%s\", color=\"%s\", label=\" { <num%d> num: %d } | { <data%.2lf> data: %.2lf } | { <curr%p> curr: %p } | { { <prev%p> prev: %p } | { <next%p> next: %p } }  \"] \n", 
-                 curr_node, third_fillcolor, default_pointer_color, nodes_count, nodes_count, curr_node->data, curr_node->data, curr_node, curr_node, curr_node, curr_node->prev, curr_node, curr_node->next );
+        fprintf( file->stream, "node_%p [shape = record; style=\"rounded, filled\", fillcolor=\"%s\", color=\"%s\", label=\" { <num%d> num: %d } | { <data%p> data: \"%s\" } | { <curr%p> curr: %p } | { { <prev%p> prev: %p } | { <next%p> next: %p } }  \"] \n", 
+                 curr_node, third_fillcolor, default_pointer_color, nodes_count, nodes_count, curr_node, curr_node->data.string, curr_node, curr_node, curr_node, curr_node->prev, curr_node, curr_node->next );
         //===================
 
         curr_node = curr_node->next;
@@ -108,6 +108,6 @@ ListInfo_t DotCollector( List_t* list, File_text* file )
         right_node = right_node->next;
     }
 
-    return GOOD;
+    return kGoodList;
 }
 
