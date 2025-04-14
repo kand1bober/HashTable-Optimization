@@ -5,7 +5,7 @@ HashTable_t* HashTableCtor ()
 {
     HashTable_t* table = (HashTable_t* )malloc( sizeof(List) + sizeof(Key_t) );
     table->data_array_size = 0;
-    table->array_size = used_case_size;
+    table->array_size = kUsedCaseSize;
 
     if( !table )
     {
@@ -30,6 +30,56 @@ HashTableInfo HashTableDtor (HashTable_t* table)
     {
         return kBadTable;
     }
+}
+
+
+HashTableInfo TableInput (TextInfo* text_info )
+{
+    FILE* poem_file = fopen (kSrcFile, "rw");
+
+    struct stat file_info = {};
+
+    stat (kSrcFile, &file_info);
+
+    text_info->size = (unsigned long int)file_info.st_size;
+ 
+    text_info->array = (char*)malloc (text_info->size);
+    
+    fread(text_info->file, sizeof(char), text_info->size, poem_file);
+
+    char* text_ptr = text_info->array;
+    char ch = *text_ptr;
+    size_t word_counter = 0;
+    while (ch != EOF)
+    {
+        if ( ch == '\n' )
+        {
+            *text_ptr = '\0';
+            word_counter++;
+        }
+
+        text_info++;
+        ch = *text_ptr;
+
+    }
+    text_info->words_count = word_counter;
+
+    return kGoodTable;
+}
+
+
+HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable_t* slow_table)
+{
+    size_t shift = 0;
+    int word_length = 0;
+    for (size_t i = 0; i < text_info->words_count; i++)
+    {
+        word_length = strlen (text_info->array + shift);
+        shift += (word_length + 1);
+
+    }
+
+    return kGoodTable;          
 }
 
 
@@ -84,11 +134,12 @@ uint32_t MurmurHash2 (const char* key, unsigned int len)
     switch (len)
     {
         case 3:
-        h ^= data[2] << 16;
+            h ^= data[2] << 16;
         case 2:
-        h ^= data[1] << 8;
+            h ^= data[1] << 8;
         case 1:
-        h ^= data[0];
+            h ^= data[0];        
+         
         h *= m;
     };
 
@@ -96,7 +147,7 @@ uint32_t MurmurHash2 (const char* key, unsigned int len)
     h *= m;
     h ^= h >> 15;
 
-    h = h % used_case_size;   // this part is not from original murmur 
+    h = h % kUsedCaseSize;   // this part is not from original murmur 
 
     return h;
 }
@@ -105,7 +156,6 @@ uint32_t MurmurHash2 (const char* key, unsigned int len)
 //returns index of elem in array of hash table 
 HashTableInfo TableSearch (const char* to_search, size_t* found, HashTable_t* table)
 {
-    size_t index = 0;
     *found = 0;
 
     uint32_t key = MurmurHash2 (to_search, strlen(to_search) );   

@@ -26,5 +26,5 @@ $(EXECUTABLE): $(OBJECTS_LIST)
 
 
 clean:
-	@rm  -rf  $(SOURCES_LIST/*.o) $(EXECUTABLE)
-	@rm  -rf  $(TO_REMOVE_DOT)
+	@rm  $(OBJECTS_LIST) $(EXECUTABLE)
+	@rm  $(TO_REMOVE_DOT)
