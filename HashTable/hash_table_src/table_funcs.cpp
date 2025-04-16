@@ -1,76 +1,88 @@
 #include "../hash_table_headers/hash_table.h"
+#include <cstdio>
 
 
-HashTable_t* HashTableCtor ()
+HashTableInfo HashTableCtor (HashTable_t* table)
 {
-    HashTable_t* table = (HashTable_t* )malloc( sizeof(List) + sizeof(Key_t) );
-    table->data_array_size = 0;
+    table->array = (HashTableElem* )malloc (sizeof(HashTableElem) * kUsedCaseSize);
     table->array_size = kUsedCaseSize;
 
-    if( !table )
+    if (!table->array)
     {
-        printf("\nError\n");
-        exit(1);
+        printf ("\nError in memory allocating\n");
+        exit (1);
     }
-
-    return table;
+    else
+    {
+        return kGoodTable;
+    }
 }
 
 
 HashTableInfo HashTableDtor (HashTable_t* table)
 {
-    free(table->data_array);
-    free(table->array);
+    free (table->array);
 
-    if(!table->array & !table->data_array)
+    if (!table->array)
     {
         return kGoodTable;
     }
-    else 
+    else
     {
         return kBadTable;
     }
 }
 
 
-HashTableInfo TableInput (TextInfo* text_info, HashTable_t* fast_table, HashTable_t* slow_table)
+HashTableInfo TableInput (HashTable_t* fast_table, HashTable_t* slow_table)
 {
+    TextInfo text_info = {};   
+
     //-------------------------------------------
-    FILE* poem_file = fopen (kSrcFile, "rw");
+    text_info.file = fopen (kSrcFile, "r");
 
     struct stat file_info = {};
 
     stat (kSrcFile, &file_info);
 
-    text_info->size = (unsigned long int)file_info.st_size;
+    text_info.size = (unsigned long int)file_info.st_size + 1; // + final '\0';
  
-    text_info->array = (char*)malloc (text_info->size);
+    text_info.array = (char*)calloc (text_info.size, sizeof(char));
+    if (!text_info.array)
+    {
+        printf ("\nError in allocating memory\n");
+        exit (1);
+    }
     
-    fread(text_info->file, sizeof(char), text_info->size, poem_file);
+    // printf ("\n\narray: %p\nfile: %p\nsize: %lu\n\n", text_info.array, text_info.file, text_info.size);
+    fseek (text_info.file, 0, SEEK_SET);
+    fread (text_info.array, sizeof(char), text_info.size, text_info.file);
     //-------------------------------------------
 
     //-------------------------------------------
-    char* text_ptr = text_info->array;
-    char ch = *text_ptr;
+    char* text_ptr = text_info.array;
+    char ch = 0;    
     size_t word_counter = 0;
-    while (ch != EOF)
+    for (size_t i = 0; i < text_info.size; i++)
     {
+        ch = *text_ptr + i;
         if (ch == '\n')
         {
             *text_ptr = '\0';
             word_counter++;
         }
-
-        text_ptr++;
-        ch = *text_ptr;
     }
-    text_info->words_count = word_counter;
+    text_info.words_count = word_counter;
     //-------------------------------------------
 
-    LoadTable (text_info, fast_table, slow_table);
+    // LoadTable (&text_info, fast_table, slow_table);
+
+    fclose (text_info.file);
+    free (text_info.array);
 
     return kGoodTable;
 }
+
 
 /*
 * 1st arg -- struct with info about input text 
@@ -78,30 +90,31 @@ HashTableInfo TableInput (TextInfo* text_info, HashTable_t* fast_table, HashTabl
 * 2nd arg -- ptr to fast version of hash table
 *
 * 3rd arg -- ptr to slow version of hash table
-*
-* result -- 
 */
 HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable_t* slow_table)
 {
+    char* word = nullptr;
     size_t shift = 0;
     int word_length = 0;
     for (size_t i = 0; i < text_info->words_count; i++)
     {
-        word_length = strlen (text_info->array + shift);
-        shift += (word_length + 1); // +1 = skip '\n'
+        word_length = strlen (text_info->array + shift); // measure word length
+        strncpy (word, text_info->array + shift, word_length); // take the word 
+        shift += (word_length + 1); // shift + 1 = skip word + '\n'
         
         if (word_length <= kFastTableMaxLen)
         {
-            TableAdd (, fast_table);
+            TableAdd (word, fast_table);
         }
         else 
         {
-            TableAdd (, slow_table);
+            TableAdd (word, slow_table);
         }
     }
 
     return kGoodTable;          
 }
+
 
 /*
 * 1st arg -- string to add in hash table
@@ -117,16 +130,19 @@ HashTableInfo TableAdd (const char* data, HashTable_t* table)
 
     if (FindNode (table->array[key].bucket, data, &number) == kNodeNotFound )
     {
-        AddNode (table->array[key].bucket, data, table->array[key].bucket_size);    //push new node to the end of bucket 
+        printf ("%s\n", data);
+        getchar ();
+        AddNode (table->array[key].bucket, data, table->array[key].bucket_size); //push new node to the end of bucket 
         table->array[key].bucket_size++;
     }
     else 
     {
-        GetNode (table->array[key].bucket, number)->data.reps++;    //increment counter
+        GetNode (table->array[key].bucket, number)->data.reps++; //increment counter
     }       
                     
     return kGoodTable;
 }
+
 
 /*
 * 1st arg -- ptr to string

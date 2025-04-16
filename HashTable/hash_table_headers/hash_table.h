@@ -11,7 +11,7 @@
 #ifndef HASH_TABLE_HEADER
 #define HASH_TABLE_HEADER
 
-#define kUsedCaseSize 160000;
+#define kUsedCaseSize 160000
 #define kSrcFile "/home/vyacheslav/HashTable/resources/Lotr_orig.txt"
 #define kOutFile "/home/vyacheslav/HashTable/resources/Lotr_parsed.txt"
 #define kFastTableMaxLen 32
@@ -43,26 +43,23 @@ typedef struct
 
 typedef struct
 {
-    HashTableElem* data_array;    //contains all strings present in hash table
-    size_t data_array_size;
-
     HashTableElem* array;
     size_t array_size;
 } HashTable_t;
 
 
-HashTable_t* HashTableCtor ();
+HashTableInfo HashTableCtor (HashTable_t* table);
 
 HashTableInfo HashTableDtor (HashTable_t* table);
-
-HashTableInfo TableAdd (const char* data, HashTable_t* table);
 
 HashTableInfo TableSearch (const char* to_search, size_t* found, HashTable_t* table);
 
 uint32_t MurmurHash2 (const char* key, unsigned int len);
 
-HashTableInfo TableInput (TextInfo* text_info, HashTable_t* fast_table, HashTable_t* slow_table);
+HashTableInfo TableInput (HashTable_t* fast_table, HashTable_t* slow_table);
 
 HashTableInfo LoadTable (TextInfo* text_info, HashTable_t *fast_table, HashTable_t *slow_table);
+
+HashTableInfo TableAdd (const char* data, HashTable_t* table);
 
 #endif
