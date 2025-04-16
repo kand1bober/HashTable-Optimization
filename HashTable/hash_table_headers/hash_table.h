@@ -12,9 +12,9 @@
 #define HASH_TABLE_HEADER
 
 #define kUsedCaseSize 160000
-#define kSrcFile "/home/vyacheslav/HashTable/resources/Lotr_orig.txt"
-#define kOutFile "/home/vyacheslav/HashTable/resources/Lotr_parsed.txt"
+#define kParsedFile "/home/vyacheslav/HashTable/resources/Lotr_parsed.txt"
 #define kFastTableMaxLen 32
+#define kLongestWord 50
 
 typedef uint32_t Key_t;             // murmur hash gives 
 

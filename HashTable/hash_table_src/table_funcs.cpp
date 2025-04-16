@@ -39,15 +39,15 @@ HashTableInfo TableInput (HashTable_t* fast_table, HashTable_t* slow_table)
     TextInfo text_info = {};   
 
     //-------------------------------------------
-    text_info.file = fopen (kSrcFile, "r");
+    text_info.file = fopen (kParsedFile, "r");
 
     struct stat file_info = {};
 
-    stat (kSrcFile, &file_info);
+    stat (kParsedFile, &file_info);
 
     text_info.size = (unsigned long int)file_info.st_size + 1; // + final '\0';
  
-    text_info.array = (char*)calloc (text_info.size, sizeof(char));
+    text_info.array = (char*)malloc (text_info.size);
     if (!text_info.array)
     {
         printf ("\nError in allocating memory\n");
@@ -65,17 +65,18 @@ HashTableInfo TableInput (HashTable_t* fast_table, HashTable_t* slow_table)
     size_t word_counter = 0;
     for (size_t i = 0; i < text_info.size; i++)
     {
-        ch = *text_ptr + i;
+        ch = *(text_ptr + i);
         if (ch == '\n')
         {
-            *text_ptr = '\0';
+            *(text_ptr + i) = '\0';
             word_counter++;
         }
     }
+    // printf("======= WORDS: %lu ==========\n", word_counter);
     text_info.words_count = word_counter;
     //-------------------------------------------
 
-    // LoadTable (&text_info, fast_table, slow_table);
+    LoadTable (&text_info, fast_table, slow_table);
 
     fclose (text_info.file);
     free (text_info.array);
@@ -93,23 +94,25 @@ HashTableInfo TableInput (HashTable_t* fast_table, HashTable_t* slow_table)
 */
 HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable_t* slow_table)
 {
-    char* word = nullptr;
+    char word[kLongestWord] = {};
     size_t shift = 0;
     int word_length = 0;
     for (size_t i = 0; i < text_info->words_count; i++)
     {
-        word_length = strlen (text_info->array + shift); // measure word length
+        word_length = strlen (text_info->array + shift); // measure word length + '\0'
         strncpy (word, text_info->array + shift, word_length); // take the word 
-        shift += (word_length + 1); // shift + 1 = skip word + '\n'
+        shift += (word_length) + 1; // shift = skip word + '\0'
         
-        if (word_length <= kFastTableMaxLen)
-        {
-            TableAdd (word, fast_table);
-        }
-        else 
-        {
-            TableAdd (word, slow_table);
-        }
+        // if (word_length <= kFastTableMaxLen)
+        // {
+        //     TableAdd (word, fast_table);
+        // }
+        // else 
+        // {
+        //     TableAdd (word, slow_table);
+        // }
+
+        TableAdd (word, fast_table);
     }
 
     return kGoodTable;          
@@ -125,11 +128,12 @@ HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable
 */
 HashTableInfo TableAdd (const char* data, HashTable_t* table)
 {
-    uint32_t key = MurmurHash2 (data, strlen(data) );   
+    uint32_t key = MurmurHash2 (data, strlen(data));   
     int number = 0;  
 
-    if (FindNode (table->array[key].bucket, data, &number) == kNodeNotFound )
+    if (FindNode (table->array[key].bucket, data, &number) == kNodeNotFound)
     {
+        printf("=======HUY 1=========");
         printf ("%s\n", data);
         getchar ();
         AddNode (table->array[key].bucket, data, table->array[key].bucket_size); //push new node to the end of bucket 
@@ -137,6 +141,8 @@ HashTableInfo TableAdd (const char* data, HashTable_t* table)
     }
     else 
     {
+        printf("=======HUY 2=========");
+
         GetNode (table->array[key].bucket, number)->data.reps++; //increment counter
     }       
                     
