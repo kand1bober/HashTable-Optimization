@@ -26,5 +26,5 @@ $(EXECUTABLE): $(OBJECTS_LIST)
 
 
 clean:
-	@rm  $(OBJECTS_LIST) $(EXECUTABLE)
+	@rm $(EXECUTABLE)
 	@rm  $(TO_REMOVE_DOT)

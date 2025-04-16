@@ -33,8 +33,9 @@ HashTableInfo HashTableDtor (HashTable_t* table)
 }
 
 
-HashTableInfo TableInput (TextInfo* text_info )
+HashTableInfo TableInput (TextInfo* text_info, HashTable_t* fast_table, HashTable_t* slow_table)
 {
+    //-------------------------------------------
     FILE* poem_file = fopen (kSrcFile, "rw");
 
     struct stat file_info = {};
@@ -46,28 +47,40 @@ HashTableInfo TableInput (TextInfo* text_info )
     text_info->array = (char*)malloc (text_info->size);
     
     fread(text_info->file, sizeof(char), text_info->size, poem_file);
+    //-------------------------------------------
 
+    //-------------------------------------------
     char* text_ptr = text_info->array;
     char ch = *text_ptr;
     size_t word_counter = 0;
     while (ch != EOF)
     {
-        if ( ch == '\n' )
+        if (ch == '\n')
         {
             *text_ptr = '\0';
             word_counter++;
         }
 
-        text_info++;
+        text_ptr++;
         ch = *text_ptr;
-
     }
     text_info->words_count = word_counter;
+    //-------------------------------------------
+
+    LoadTable (text_info, fast_table, slow_table);
 
     return kGoodTable;
 }
 
-
+/*
+* 1st arg -- struct with info about input text 
+*
+* 2nd arg -- ptr to fast version of hash table
+*
+* 3rd arg -- ptr to slow version of hash table
+*
+* result -- 
+*/
 HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable_t* slow_table)
 {
     size_t shift = 0;
@@ -75,14 +88,28 @@ HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable
     for (size_t i = 0; i < text_info->words_count; i++)
     {
         word_length = strlen (text_info->array + shift);
-        shift += (word_length + 1);
-
+        shift += (word_length + 1); // +1 = skip '\n'
+        
+        if (word_length <= kFastTableMaxLen)
+        {
+            TableAdd (, fast_table);
+        }
+        else 
+        {
+            TableAdd (, slow_table);
+        }
     }
 
     return kGoodTable;          
 }
 
-
+/*
+* 1st arg -- string to add in hash table
+*
+* 2nd arg -- ptr to certain version of hash table
+*
+* result -- new string added or existing string counter incremented  
+*/
 HashTableInfo TableAdd (const char* data, HashTable_t* table)
 {
     uint32_t key = MurmurHash2 (data, strlen(data) );   
@@ -101,7 +128,13 @@ HashTableInfo TableAdd (const char* data, HashTable_t* table)
     return kGoodTable;
 }
 
-
+/*
+* 1st arg -- ptr to string
+*
+* 2nd arg -- lentgh of string 
+*
+* return -- num of bucket 
+*/
 uint32_t MurmurHash2 (const char* key, unsigned int len)
 {
     const uint32_t m = 0x5bd1e995;
@@ -161,7 +194,7 @@ HashTableInfo TableSearch (const char* to_search, size_t* found, HashTable_t* ta
     uint32_t key = MurmurHash2 (to_search, strlen(to_search) );   
     int number = 0;  
 
-    if (FindNode (table->array[key].bucket, to_search, &number) == kNodeNotFound )
+    if (FindNode (table->array[key].bucket, to_search, &number) == kNodeNotFound)
         return kElemNotFound;  
     else 
         return kElemFound;

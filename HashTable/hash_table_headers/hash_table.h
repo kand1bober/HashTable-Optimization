@@ -14,6 +14,7 @@
 #define kUsedCaseSize 160000;
 #define kSrcFile "/home/vyacheslav/HashTable/resources/Lotr_orig.txt"
 #define kOutFile "/home/vyacheslav/HashTable/resources/Lotr_parsed.txt"
+#define kFastTableMaxLen 32
 
 typedef uint32_t Key_t;             // murmur hash gives 
 
@@ -60,7 +61,7 @@ HashTableInfo TableSearch (const char* to_search, size_t* found, HashTable_t* ta
 
 uint32_t MurmurHash2 (const char* key, unsigned int len);
 
-HashTableInfo TableInput (TextInfo* text_info );
+HashTableInfo TableInput (TextInfo* text_info, HashTable_t* fast_table, HashTable_t* slow_table);
 
 HashTableInfo LoadTable (TextInfo* text_info, HashTable_t *fast_table, HashTable_t *slow_table);
 

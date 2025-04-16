@@ -6,7 +6,7 @@ int main ()
     HashTable_t slow_table = {};
 
     TextInfo text_info = {};       
-    TableInput (&text_info);
+    TableInput (&text_info, &fast_table, &slow_table);
 
     return 0;
 }

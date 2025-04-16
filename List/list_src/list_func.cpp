@@ -56,6 +56,13 @@ List_t* GetNode (List_t* list, int number)
 }
 
 
+/*
+* 1st arg -- list, where to add
+*
+* 2nd arg -- string to add 
+*
+* 3rd arg -- position in the list (if you want to add in the end, 3rd arg = size of list)
+*/
 ListInfo_t AddNode (List_t* list, const char* string, int number)
 {
     List_t* new_node = CreateNode( string );
@@ -106,7 +113,13 @@ ListInfo_t TextListDump (List_t* list)
     return kGoodList;
 }
 
-
+/*
+* 1st arg -- list, where to find
+* 
+* 2nd arg -- string to search 
+*
+* 3rd arg -- pointer to return value of function = number of found element in list 
+*/
 ListInfo FindNode (List_t* list, const char* string, int* number)
 {
     List_t* tmp_node = list;
