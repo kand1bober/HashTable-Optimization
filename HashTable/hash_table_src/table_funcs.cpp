@@ -3,22 +3,19 @@
 
 HashTableInfo HashTableCtor (HashTable_t* table)
 {   
-    // table->array = (HashTableElem* )malloc (kUsedCaseSize * sizeof(HashTableElem));
     table->array = (HashTableElem* )calloc (sizeof(HashTableElem), kUsedCaseSize); // allocating memory for storing pointers to lists
     table->array_size = kUsedCaseSize;
 
-    // int list_size = sizeof(HashTableElem) + ( 8 - sizeof(HashTableElem) % 8 );
-    // List_t* new_list = nullptr;
-    // for (int i = 0; i < kUsedCaseSize; i += list_size)
-    // {
-    //     new_list = ListConfigure ( (void*)( (char*)(table->array + i) ) ); //crate new bucket 
-    //     (table->array + i)->bucket_size = 0;
-    // }
+    for (int i = 0; i < kUsedCaseSize; i++)
+    {
+        table->array[i].bucket = ListCtor(); // add phantom element 
+        table->array[i].bucket_size = 0;
+    }
 
     if (!table->array)
     {
-        printf ("\nError in memory allocating\n");
-        exit (1);
+        printf("\nError in memory allocating\n");
+        exit(1);
     }
     else
     {
@@ -29,7 +26,12 @@ HashTableInfo HashTableCtor (HashTable_t* table)
 
 HashTableInfo HashTableDtor (HashTable_t* table)
 {
-    free (table->array);
+    for (int i = 0; i < kUsedCaseSize; i++)
+    {
+        ListDtor(table->array[i].bucket);
+    }
+
+    free(table->array);
 
     if (!table->array)
     {
@@ -47,24 +49,23 @@ HashTableInfo TableInput (HashTable_t* fast_table, HashTable_t* slow_table)
     TextInfo text_info = {};   
 
     //-------------------------------------------
-    text_info.file = fopen (kParsedFile, "r");
+    text_info.file = fopen(kParsedFile, "r");
 
     struct stat file_info = {};
 
-    stat (kParsedFile, &file_info);
+    stat(kParsedFile, &file_info);
 
     text_info.size = (unsigned long int)file_info.st_size + 1; // + final '\0';
  
-    text_info.array = (char*)malloc (text_info.size);
+    text_info.array = (char*)malloc(text_info.size);
     if (!text_info.array)
     {
-        printf ("\nError in allocating memory\n");
-        exit (1);
+        printf("\nError in allocating memory\n");
+        exit(1);
     }
     
-    // printf ("\n\narray: %p\nfile: %p\nsize: %lu\n\n", text_info.array, text_info.file, text_info.size);
-    fseek (text_info.file, 0, SEEK_SET);
-    fread (text_info.array, sizeof(char), text_info.size, text_info.file);
+    fseek(text_info.file, 0, SEEK_SET);
+    fread(text_info.array, sizeof(char), text_info.size, text_info.file);
     //-------------------------------------------
 
     //-------------------------------------------
@@ -80,14 +81,13 @@ HashTableInfo TableInput (HashTable_t* fast_table, HashTable_t* slow_table)
             word_counter++;
         }
     }
-    // printf("======= WORDS: %lu ==========\n", word_counter);
     text_info.words_count = word_counter;
     //-------------------------------------------
 
-    LoadTable (&text_info, fast_table, slow_table);
+    LoadTable(&text_info, fast_table, slow_table);
 
-    fclose (text_info.file);
-    free (text_info.array);
+    fclose(text_info.file);
+    free(text_info.array);
 
     return kGoodTable;
 }
@@ -107,8 +107,8 @@ HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable
     int word_length = 0;
     for (size_t i = 0; i < text_info->words_count; i++)
     {
-        word_length = strlen (text_info->array + shift) + 1; // measure word length + '\0'
-        strncpy (word, text_info->array + shift, word_length); // take the word 
+        word_length = strlen(text_info->array + shift) + 1; // measure word length + '\0'
+        strncpy(word, text_info->array + shift, word_length); // take the word 
         shift += (word_length); // shift = skip word + '\0'
         
         // if (word_length <= kFastTableMaxLen)
@@ -120,7 +120,7 @@ HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable
         //     TableAdd (word, word_length, slow_table);
         // }
 
-        TableAdd (word, word_length, fast_table);
+        TableAdd(word, word_length, fast_table);
     }
 
     return kGoodTable;          
@@ -134,46 +134,30 @@ HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable
 *
 * result -- new string added or existing string counter incremented  
 */
-HashTableInfo TableAdd (const char* word, int word_length, HashTable_t* table)
+HashTableInfo TableAdd(const char* word, int word_length, HashTable_t* table)
 {
     uint32_t key = MurmurHash2 (word, word_length - 1);   
-
-    // if (!strcmp(word, "a"))
-    // {
-    //     printf("Hash of \"a\" is %u\n", key);
-    // }
-
-    static size_t count = 0;
-    printf ("%lu Key: %d\n", count, key);
-    count++;
 
     int number = 0;
     if (table->array[key].bucket) //if bucket exists 
     {
-        printf("=== HUY 1 ===\n");
         number = ListFindNode (table->array[key].bucket, word);
         if (number >= 0) //if same element in bucket exists
         {
-            printf("=== HUY 1.1 ===\n");
-
-            ListGetNode (table->array[key].bucket, number)->word_reps++; //increment counter
+            ListGetNode(table->array[key].bucket, number)->word_reps++; //increment counter
         }
         else  
         {
-            printf("=== HUY 1.2 ===\n");
-
             ListAdd (table->array[key].bucket, word, table->array[key].bucket_size); //push new node to the end of bucket 
             table->array[key].bucket_size++;
         }
     }
     else //create bucket  
     {
-        printf("=== HUY 2 ===\n");
+        printf("\u001b[31;1m" "=== HUY Create ===\n" "\u001b[0m");
 
-        List_t* new_list = nullptr;
-        printf("Configure: table->array[key].bucket: %p&(table->array[key].bucket): \n%p\n", table->array[key].bucket, &(table->array[key].bucket) );
-        new_list = ListConfigure ( (void*)(&(table->array[key].bucket)) );
-        ListAdd (new_list->next, word, 0); // add first word to new bucket
+        table->array[key].bucket = ListCtor(); // add phantom element 
+        ListAdd(table->array[key].bucket, word, 0); // add first word to new bucket
     }
        
     return kGoodTable; 

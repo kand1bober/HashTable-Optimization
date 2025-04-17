@@ -161,7 +161,7 @@ int ListFindNode (List_t* list, const char* string)
 
     while (1)
     {   
-        printf("find %d, word: \"%s\", tmp: %p\n", iter, string, tmp_node);
+        // printf("find %d, word: \"%s\", tmp: %p\n", iter, string, tmp_node);
         
         next_node = tmp_node->next;
 
