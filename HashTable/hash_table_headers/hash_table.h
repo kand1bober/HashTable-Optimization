@@ -22,8 +22,8 @@ typedef struct
 {
     FILE* file;
     size_t size;
-    char* array;
     size_t words_count;
+    char* array;
 } TextInfo;
 
 typedef enum 
@@ -36,15 +36,14 @@ typedef enum
 
 typedef struct
 {
-    uint32_t key;
     uint32_t bucket_size;
-    List* bucket;   // bucket = list of strings
+    List_t* bucket;   // bucket = list of strings
 } HashTableElem;
 
 typedef struct
 {
-    HashTableElem* array;
     size_t array_size;
+    HashTableElem* array;
 } HashTable_t;
 
 

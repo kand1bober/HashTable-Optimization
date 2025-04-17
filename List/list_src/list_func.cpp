@@ -2,11 +2,10 @@
 #include "../list_headers/list_info.h"
 #include "../list_headers/list_dot.h"
 
-List_t* CreateNode (const char* string)
+List_t* ListCreateNode (const char* string)
 {
     int str_len = strlen(string); 
     List_t* new_node = (List_t* )malloc( sizeof(List_t) + str_len + 1);
-    new_node->str_len = str_len;
 
     if (!new_node)
     {   
@@ -14,17 +13,41 @@ List_t* CreateNode (const char* string)
         exit(1);
     }
 
+    new_node->str_len = str_len;
+    new_node->word_reps = 0;
     new_node->next = nullptr;
     new_node->prev = nullptr;
-    strncpy( ( GET_NODE_DATA(new_node) ), string, str_len + 1);
+
+    strncpy(GET_NODE_DATA(new_node), string, str_len + 1);
 
     return new_node;
 }
 
 
+/*
+* make new list(phantom  node) in an already allocated memory
+*
+* 1st arg -- list, where to add
+*
+* 2nd arg -- string to add 
+*
+*/
+List_t* ListConfigure (void* mem_ptr)
+{   
+    List_t* list = (List_t* )mem_ptr;
+    list->next = list;
+    list->prev = list;
+    int word_len = strlen(LIST_POISON);
+    list->str_len = word_len;
+    strncpy(GET_NODE_DATA(list), LIST_POISON, word_len + 1);
+
+    return list;
+}
+
+
 List_t* ListCtor ()
 {
-    List_t* phantom = CreateNode (LIST_POISON);
+    List_t* phantom = ListCreateNode (LIST_POISON);
 
     phantom->next = phantom;
     phantom->prev = phantom;
@@ -51,7 +74,7 @@ ListInfo_t ListDtor (List_t* list)
 }
  
 
-List_t* GetNode (List_t* list, int number)
+List_t* ListGetNode (List_t* list, int number)
 {
     List_t* curr_node = list;
 
@@ -73,9 +96,9 @@ List_t* GetNode (List_t* list, int number)
 */
 ListInfo_t ListAdd (List_t* list, const char* string, int number)
 {
-    List_t* new_node = CreateNode (string);
+    List_t* new_node = ListCreateNode (string);
 
-    List_t* tmp_node = GetNode (list, number);
+    List_t* tmp_node = ListGetNode (list, number);
 
     new_node->prev = tmp_node;
     new_node->next = tmp_node->next;
@@ -89,7 +112,7 @@ ListInfo_t ListAdd (List_t* list, const char* string, int number)
 
 ListInfo_t ListDelete (List_t* list, int number)
 {
-    List_t* tmp_node = GetNode( list, number );
+    List_t* tmp_node = ListGetNode( list, number );
 
     tmp_node->prev->next = tmp_node->next;
     tmp_node->next->prev = tmp_node->prev;
@@ -130,30 +153,42 @@ ListInfo_t TextListDump (List_t* list)
 *
 * return -- number of elem node, if found; (< 0), if not found
 */
-int FindNode (List_t* list, const char* string)
+int ListFindNode (List_t* list, const char* string)
 {
     List_t* tmp_node = list;
-    List_t* next_node = list;
+    List_t* next_node = nullptr;
     int iter = 0;
 
     while (1)
     {   
+        printf("find %d, word: \"%s\", tmp: %p\n", iter, string, tmp_node);
+        
         next_node = tmp_node->next;
-        if (next_node != nullptr)
-        {   
-            tmp_node = next_node;
-            iter++;
-        }
-        else
-        {
-            return -1;
-        }
 
-        if( !strcmp( GET_NODE_DATA(tmp_node), string) )
+        if (next_node)
         {
-            return iter;
+            if (next_node != list)
+            {
+                if (!strcmp( GET_NODE_DATA(tmp_node), string))
+                {
+                    return iter;
+                }
+                else  
+                {
+                    tmp_node = next_node;
+                    iter++;
+                }
+            }
+            else  
+            {
+                return -1;
+            }
         }
-
+        else  
+        {
+            printf("Bad list allocation");
+            exit(1);
+        }
     }
 
     return -1;

@@ -3,8 +3,17 @@
 
 HashTableInfo HashTableCtor (HashTable_t* table)
 {   
-    table->array = (HashTableElem* )calloc (kUsedCaseSize, sizeof(HashTableElem));
+    // table->array = (HashTableElem* )malloc (kUsedCaseSize * sizeof(HashTableElem));
+    table->array = (HashTableElem* )calloc (sizeof(HashTableElem), kUsedCaseSize); // allocating memory for storing pointers to lists
     table->array_size = kUsedCaseSize;
+
+    // int list_size = sizeof(HashTableElem) + ( 8 - sizeof(HashTableElem) % 8 );
+    // List_t* new_list = nullptr;
+    // for (int i = 0; i < kUsedCaseSize; i += list_size)
+    // {
+    //     new_list = ListConfigure ( (void*)( (char*)(table->array + i) ) ); //crate new bucket 
+    //     (table->array + i)->bucket_size = 0;
+    // }
 
     if (!table->array)
     {
@@ -104,16 +113,14 @@ HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable
         
         // if (word_length <= kFastTableMaxLen)
         // {
-        //     TableAdd (word, fast_table);
+        //     TableAdd (word, word_length, fast_table);
         // }
         // else 
         // {
-        //     TableAdd (word, slow_table);
+        //     TableAdd (word, word_length, slow_table);
         // }
 
         TableAdd (word, word_length, fast_table);
-
-        // printf("%lu:  \"%.*s\" %d\n", i, word_length, word, word_length);
     }
 
     return kGoodTable;          
@@ -136,23 +143,26 @@ HashTableInfo TableAdd (const char* word, int word_length, HashTable_t* table)
     //     printf("Hash of \"a\" is %u\n", key);
     // }
 
-    // static size_t count = 0;
-    // printf ("%lu Key: %d\n", count, key);
-    // count++;
+    static size_t count = 0;
+    printf ("%lu Key: %d\n", count, key);
+    count++;
 
     int number = 0;
     if (table->array[key].bucket) //if bucket exists 
     {
         printf("=== HUY 1 ===\n");
-        if (FindNode (table->array[key].bucket, word, &number) == kNodeNotFound) //if same element in bucket exists
+        number = ListFindNode (table->array[key].bucket, word);
+        if (number >= 0) //if same element in bucket exists
         {
             printf("=== HUY 1.1 ===\n");
-            // GetNode (table->array[key].bucket, number)->data.reps++; //increment counter
+
+            ListGetNode (table->array[key].bucket, number)->word_reps++; //increment counter
         }
         else  
         {
             printf("=== HUY 1.2 ===\n");
-            // AddNode (table->array[key].bucket, word, table->array[key].bucket_size); //push new node to the end of bucket 
+
+            ListAdd (table->array[key].bucket, word, table->array[key].bucket_size); //push new node to the end of bucket 
             table->array[key].bucket_size++;
         }
     }
@@ -160,10 +170,13 @@ HashTableInfo TableAdd (const char* word, int word_length, HashTable_t* table)
     {
         printf("=== HUY 2 ===\n");
 
-        AddNode (table->array[key], word,  );    
+        List_t* new_list = nullptr;
+        printf("Configure: table->array[key].bucket: %p&(table->array[key].bucket): \n%p\n", table->array[key].bucket, &(table->array[key].bucket) );
+        new_list = ListConfigure ( (void*)(&(table->array[key].bucket)) );
+        ListAdd (new_list->next, word, 0); // add first word to new bucket
     }
        
-    return kGoodTable;
+    return kGoodTable; 
 }
 
 
@@ -225,17 +238,17 @@ uint32_t MurmurHash2 (const char* key, unsigned int len)
 }
 
 
-//returns index of elem in array of hash table 
-HashTableInfo TableSearch (const char* to_search, size_t* found, HashTable_t* table)
-{
-    *found = 0;
+// //returns index of elem in array of hash table 
+// HashTableInfo TableSearch (const char* to_search, size_t* found, HashTable_t* table)
+// {
+//     *found = 0;
 
-    uint32_t key = MurmurHash2 (to_search, strlen(to_search) );   
-    int number = 0;  
+//     uint32_t key = MurmurHash2 (to_search, strlen(to_search) );   
+//     int number = 0;  
 
-    if (FindNode (table->array[key].bucket, to_search, &number) == kNodeNotFound)
-        return kElemNotFound;  
-    else 
-        return kElemFound;
-        // GetNode (table->array[key].bucket, number);    //increment counter
-}
+//     if (ListFindNode (table->array[key].bucket, to_search) == kNodeNotFound)
+//         return kElemNotFound;  
+//     else 
+//         return kElemFound;
+//         // GetNode (table->array[key].bucket, number);    //increment counter
+// }
