@@ -4,41 +4,21 @@
 
 // int main ()
 // {
-//     Run();
-
-//     return 0;
-// }
-
-// ListInfo_t Run ()
-// {
 //     List_t* my_list = nullptr;
 
 //     my_list = ListCtor();
 
-//     ListData_t data = {"hello", 0};
-//     int number = 0;
+//     const char* string = "Hello";
+//     ListAdd (my_list, "Hello", 0);
+//     ListAdd (my_list, "Man", 1);
+//     ListAdd (my_list, "Mam", 2);
+//     ListDot (my_list);
+//     getchar();
 
-//         number = 0;
-//         AddNode (my_list, data.string, number);
-//         ListDot( my_list );
-//         getchar();
+//     ListDelete (my_list, 1);
+//     ListDot (my_list);
 
+//     ListDtor (my_list);
 
-//         data = {"man", 0};
-//         number = 1;
-//         AddNode( my_list, data.string, number );
-//         ListDot( my_list );
-//         getchar();
-
-//         DeleteNode (my_list, 1);
-//         ListDot( my_list );
-//         getchar();
-
-//         DeleteNode (my_list, 1);
-//         ListDot( my_list );
-//         getchar();
-
-//         ListDtor( my_list );
-
-//     return kGoodList;
+//     return 0;
 // }

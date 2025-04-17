@@ -11,7 +11,7 @@
 #ifndef HASH_TABLE_HEADER
 #define HASH_TABLE_HEADER
 
-#define kUsedCaseSize 160000
+#define kUsedCaseSize 16000
 #define kParsedFile "/home/vyacheslav/HashTable/resources/Lotr_parsed.txt"
 #define kFastTableMaxLen 32
 #define kLongestWord 50
@@ -36,7 +36,7 @@ typedef enum
 
 typedef struct
 {
-    uint64_t key;
+    uint32_t key;
     uint32_t bucket_size;
     List* bucket;   // bucket = list of strings
 } HashTableElem;
@@ -60,6 +60,6 @@ HashTableInfo TableInput (HashTable_t* fast_table, HashTable_t* slow_table);
 
 HashTableInfo LoadTable (TextInfo* text_info, HashTable_t *fast_table, HashTable_t *slow_table);
 
-HashTableInfo TableAdd (const char* data, HashTable_t* table);
+HashTableInfo TableAdd (const char* word, int word_length, HashTable_t* fast_table);
 
 #endif

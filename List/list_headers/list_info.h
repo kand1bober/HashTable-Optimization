@@ -10,9 +10,6 @@
     {
         kGoodList = 52,
         kBadList = 53,
-        kNodeFound,
-        kNodeNotFound,
-
     }ListInfo_t;
 
 #endif

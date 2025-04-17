@@ -1,10 +1,9 @@
 #include "../hash_table_headers/hash_table.h"
-#include <cstdio>
 
 
 HashTableInfo HashTableCtor (HashTable_t* table)
-{
-    table->array = (HashTableElem* )malloc (sizeof(HashTableElem) * kUsedCaseSize);
+{   
+    table->array = (HashTableElem* )calloc (kUsedCaseSize, sizeof(HashTableElem));
     table->array_size = kUsedCaseSize;
 
     if (!table->array)
@@ -94,14 +93,14 @@ HashTableInfo TableInput (HashTable_t* fast_table, HashTable_t* slow_table)
 */
 HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable_t* slow_table)
 {
-    char word[kLongestWord] = {};
+    char word[kLongestWord] = {0};
     size_t shift = 0;
     int word_length = 0;
     for (size_t i = 0; i < text_info->words_count; i++)
     {
-        word_length = strlen (text_info->array + shift); // measure word length + '\0'
+        word_length = strlen (text_info->array + shift) + 1; // measure word length + '\0'
         strncpy (word, text_info->array + shift, word_length); // take the word 
-        shift += (word_length) + 1; // shift = skip word + '\0'
+        shift += (word_length); // shift = skip word + '\0'
         
         // if (word_length <= kFastTableMaxLen)
         // {
@@ -112,7 +111,9 @@ HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable
         //     TableAdd (word, slow_table);
         // }
 
-        TableAdd (word, fast_table);
+        TableAdd (word, word_length, fast_table);
+
+        // printf("%lu:  \"%.*s\" %d\n", i, word_length, word, word_length);
     }
 
     return kGoodTable;          
@@ -126,26 +127,42 @@ HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable
 *
 * result -- new string added or existing string counter incremented  
 */
-HashTableInfo TableAdd (const char* data, HashTable_t* table)
+HashTableInfo TableAdd (const char* word, int word_length, HashTable_t* table)
 {
-    uint32_t key = MurmurHash2 (data, strlen(data));   
-    int number = 0;  
+    uint32_t key = MurmurHash2 (word, word_length - 1);   
 
-    if (FindNode (table->array[key].bucket, data, &number) == kNodeNotFound)
+    // if (!strcmp(word, "a"))
+    // {
+    //     printf("Hash of \"a\" is %u\n", key);
+    // }
+
+    // static size_t count = 0;
+    // printf ("%lu Key: %d\n", count, key);
+    // count++;
+
+    int number = 0;
+    if (table->array[key].bucket) //if bucket exists 
     {
-        printf("=======HUY 1=========");
-        printf ("%s\n", data);
-        getchar ();
-        AddNode (table->array[key].bucket, data, table->array[key].bucket_size); //push new node to the end of bucket 
-        table->array[key].bucket_size++;
+        printf("=== HUY 1 ===\n");
+        if (FindNode (table->array[key].bucket, word, &number) == kNodeNotFound) //if same element in bucket exists
+        {
+            printf("=== HUY 1.1 ===\n");
+            // GetNode (table->array[key].bucket, number)->data.reps++; //increment counter
+        }
+        else  
+        {
+            printf("=== HUY 1.2 ===\n");
+            // AddNode (table->array[key].bucket, word, table->array[key].bucket_size); //push new node to the end of bucket 
+            table->array[key].bucket_size++;
+        }
     }
-    else 
+    else //create bucket  
     {
-        printf("=======HUY 2=========");
+        printf("=== HUY 2 ===\n");
 
-        GetNode (table->array[key].bucket, number)->data.reps++; //increment counter
-    }       
-                    
+        AddNode (table->array[key], word,  );    
+    }
+       
     return kGoodTable;
 }
 

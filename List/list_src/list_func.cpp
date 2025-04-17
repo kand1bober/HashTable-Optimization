@@ -4,11 +4,19 @@
 
 List_t* CreateNode (const char* string)
 {
-    List_t* new_node = (List_t* )malloc( sizeof( List_t ) );
+    int str_len = strlen(string); 
+    List_t* new_node = (List_t* )malloc( sizeof(List_t) + str_len + 1);
+    new_node->str_len = str_len;
 
-    new_node->data.string = string;
+    if (!new_node)
+    {   
+        printf("Failed to allocate new node\n");
+        exit(1);
+    }
+
     new_node->next = nullptr;
     new_node->prev = nullptr;
+    strncpy( ( GET_NODE_DATA(new_node) ), string, str_len + 1);
 
     return new_node;
 }
@@ -30,7 +38,7 @@ ListInfo_t ListDtor (List_t* list)
     List_t* curr_node = list;
     List_t* next_node = curr_node->next;
 
-    while( curr_node->next != list )
+    while (curr_node->next != list)
     {
         free (curr_node);
         curr_node = next_node;
@@ -47,7 +55,7 @@ List_t* GetNode (List_t* list, int number)
 {
     List_t* curr_node = list;
 
-    for( int i = 0; i < number; i++ ) //TODO: по-хорошему сюда проверку на то, что номер элемента не больше, чем последний + 1
+    for (int i = 0; i < number; i++)
     {
         curr_node = curr_node->next; 
     }
@@ -63,11 +71,11 @@ List_t* GetNode (List_t* list, int number)
 *
 * 3rd arg -- position in the list (if you want to add in the end, 3rd arg = size of list)
 */
-ListInfo_t AddNode (List_t* list, const char* string, int number)
+ListInfo_t ListAdd (List_t* list, const char* string, int number)
 {
-    List_t* new_node = CreateNode( string );
+    List_t* new_node = CreateNode (string);
 
-    List_t* tmp_node = GetNode( list, number );
+    List_t* tmp_node = GetNode (list, number);
 
     new_node->prev = tmp_node;
     new_node->next = tmp_node->next;
@@ -79,7 +87,7 @@ ListInfo_t AddNode (List_t* list, const char* string, int number)
 }       
 
 
-ListInfo_t DeleteNode (List_t* list, int number)
+ListInfo_t ListDelete (List_t* list, int number)
 {
     List_t* tmp_node = GetNode( list, number );
 
@@ -97,17 +105,17 @@ ListInfo_t TextListDump (List_t* list)
     List_t* curr_node = list;
 
     printf("||================\n");
-    printf("||   \"%s\" --- phantom\n\n", curr_node->data.string );
+    printf("||   \"%s\" --- phantom\n\n", GET_NODE_DATA(curr_node) );
     curr_node = curr_node->next;
     while( curr_node->next != list ) 
     {
         printf("||   \"%s\"   \n"
                "||    ||     \n"
-               "||    \\/     \n", curr_node->data.string );
+               "||    \\/     \n", GET_NODE_DATA(curr_node) );
 
         curr_node = curr_node->next;
     }
-    printf("||   \"%s\"   \n", curr_node->data.string );
+    printf("||   \"%s\"   \n", GET_NODE_DATA(curr_node) );
     printf("||================\n\n");
 
     return kGoodList;
@@ -119,33 +127,34 @@ ListInfo_t TextListDump (List_t* list)
 * 2nd arg -- string to search 
 *
 * 3rd arg -- pointer to return value of function = number of found element in list 
+*
+* return -- number of elem node, if found; (< 0), if not found
 */
-ListInfo FindNode (List_t* list, const char* string, int* number)
+int FindNode (List_t* list, const char* string)
 {
     List_t* tmp_node = list;
     List_t* next_node = list;
     int iter = 0;
 
-    while(1)
+    while (1)
     {   
         next_node = tmp_node->next;
-        if(next_node != nullptr)
+        if (next_node != nullptr)
         {   
             tmp_node = next_node;
             iter++;
         }
         else
         {
-            return kNodeNotFound;
+            return -1;
         }
 
-        if( !strcmp(tmp_node->data.string, string) )
+        if( !strcmp( GET_NODE_DATA(tmp_node), string) )
         {
-            *number = iter;
-            return kNodeFound;
+            return iter;
         }
 
     }
 
-    return kNodeNotFound;
+    return -1;
 }
