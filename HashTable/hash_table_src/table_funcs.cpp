@@ -3,10 +3,10 @@
 
 HashTableInfo HashTableCtor (HashTable_t* table)
 {   
-    table->array = (HashTableElem* )calloc (sizeof(HashTableElem), kUsedCaseSize); // allocating memory for storing pointers to lists
+    table->array = (HashTableElem* )calloc (kUsedCaseSize, sizeof(HashTableElem)); // allocating memory for storing pointers to lists
     table->array_size = kUsedCaseSize;
 
-    for (int i = 0; i < kUsedCaseSize; i++)
+    for (size_t i = 0; i < kUsedCaseSize; i++)
     {
         table->array[i].bucket = ListCtor(); // add phantom element 
         table->array[i].bucket_size = 0;
@@ -26,7 +26,7 @@ HashTableInfo HashTableCtor (HashTable_t* table)
 
 HashTableInfo HashTableDtor (HashTable_t* table)
 {
-    for (int i = 0; i < kUsedCaseSize; i++)
+    for (size_t i = 0; i < kUsedCaseSize; i++)
     {
         ListDtor(table->array[i].bucket);
     }
@@ -48,7 +48,7 @@ HashTableInfo TableInput (HashTable_t* fast_table, HashTable_t* slow_table)
 {
     TextInfo text_info = {};   
 
-    //-------------------------------------------
+    //------------------OPEN---------------------
     text_info.file = fopen(kParsedFile, "r");
 
     struct stat file_info = {};
@@ -68,7 +68,7 @@ HashTableInfo TableInput (HashTable_t* fast_table, HashTable_t* slow_table)
     fread(text_info.array, sizeof(char), text_info.size, text_info.file);
     //-------------------------------------------
 
-    //-------------------------------------------
+    //--------------Delete '\n'------------------
     char* text_ptr = text_info.array;
     char ch = 0;    
     size_t word_counter = 0;
@@ -230,9 +230,77 @@ uint32_t MurmurHash2 (const char* key, unsigned int len)
 //     uint32_t key = MurmurHash2 (to_search, strlen(to_search) );   
 //     int number = 0;  
 
-//     if (ListFindNode (table->array[key].bucket, to_search) == kNodeNotFound)
+//     if (  )
 //         return kElemNotFound;  
 //     else 
 //         return kElemFound;
 //         // GetNode (table->array[key].bucket, number);    //increment counter
 // }
+
+
+HashTableInfo TableDump (HashTable_t* table)
+{   
+    TextInfo output_info = {};
+    //------------------OPEN---------------------
+    output_info.file = fopen(kDumpFile, "w");
+
+    struct stat file_info = {};
+
+    stat(kParsedFile, &file_info);
+
+    output_info.size = (unsigned long int)file_info.st_size * 2; // с запасом (так называемым горемыкой) 
+
+    fseek(output_info.file, 0, SEEK_SET);
+    fread(output_info.array, sizeof(char), output_info.size, output_info.file);
+
+    size_t table_data_shift = 0;
+    char* table_data = (char*)calloc(output_info.size, sizeof(char));
+    if (!table_data)
+    {
+        printf("\nError in allocating memory\n");
+        exit(1);
+    }
+    //-------------------------------------------      
+
+    char dump_head[30] = {0};
+
+    char* word = nullptr; // pointer to node data 
+    char list_data[3000] = {0}; //string with data of each node one after another
+    int list_data_shift = 0; // offset frpm beggining of string
+    List_t* tmp_node = nullptr;
+    for (size_t i = 0; i < table->array_size; i++)
+    {   
+        tmp_node = table->array[i].bucket; 
+        word = GET_NODE_DATA(tmp_node);
+        for (size_t j = 0; j < table->array[i].bucket_size; j++)
+        {
+            sprintf(list_data + list_data_shift, "%s, ", word);
+            list_data_shift += strlen(word) + 2;
+            tmp_node = tmp_node->next;
+            word = GET_NODE_DATA(tmp_node);
+        }
+        sprintf(list_data + list_data_shift, "%s", GET_NODE_DATA(tmp_node));
+        list_data_shift += strlen(word);
+
+        sprintf(dump_head, "(num: %lu), ", i);
+        sprintf(table_data + table_data_shift, "%s%s\n", dump_head, list_data);
+        
+        table_data_shift += list_data_shift + strlen(dump_head) + 1;
+        list_data_shift = 0;
+    }
+
+    fwrite(table_data, sizeof(char), table_data_shift, output_info.file);
+
+    free(table_data);
+    fclose(output_info.file);
+
+    return kGoodTable;
+}
+
+
+HashTableInfo CollectListNodeData ()
+{
+
+
+    return kGoodTable;
+}
