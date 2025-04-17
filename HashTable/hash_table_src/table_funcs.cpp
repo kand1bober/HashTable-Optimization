@@ -139,25 +139,15 @@ HashTableInfo TableAdd(const char* word, int word_length, HashTable_t* table)
     uint32_t key = MurmurHash2 (word, word_length - 1);   
 
     int number = 0;
-    if (table->array[key].bucket) //if bucket exists 
+    number = ListFindNode (table->array[key].bucket, word);
+    if (number >= 0) //if same element in bucket exists
     {
-        number = ListFindNode (table->array[key].bucket, word);
-        if (number >= 0) //if same element in bucket exists
-        {
-            ListGetNode(table->array[key].bucket, number)->word_reps++; //increment counter
-        }
-        else  
-        {
-            ListAdd (table->array[key].bucket, word, table->array[key].bucket_size); //push new node to the end of bucket 
-            table->array[key].bucket_size++;
-        }
+        ListGetNode(table->array[key].bucket, number)->word_reps++; //increment counter
     }
-    else //create bucket  
+    else  
     {
-        printf("\u001b[31;1m" "=== HUY Create ===\n" "\u001b[0m");
-
-        table->array[key].bucket = ListCtor(); // add phantom element 
-        ListAdd(table->array[key].bucket, word, 0); // add first word to new bucket
+        ListAdd (table->array[key].bucket, word, table->array[key].bucket_size); //push new node to the end of bucket 
+        table->array[key].bucket_size++;
     }
        
     return kGoodTable; 
@@ -222,22 +212,6 @@ uint32_t MurmurHash2 (const char* key, unsigned int len)
 }
 
 
-// //returns index of elem in array of hash table 
-// HashTableInfo TableSearch (const char* to_search, size_t* found, HashTable_t* table)
-// {
-//     *found = 0;
-
-//     uint32_t key = MurmurHash2 (to_search, strlen(to_search) );   
-//     int number = 0;  
-
-//     if (  )
-//         return kElemNotFound;  
-//     else 
-//         return kElemFound;
-//         // GetNode (table->array[key].bucket, number);    //increment counter
-// }
-
-
 HashTableInfo TableDump (HashTable_t* table)
 {   
     TextInfo output_info = {};
@@ -262,10 +236,11 @@ HashTableInfo TableDump (HashTable_t* table)
     }
     //-------------------------------------------      
 
-    char dump_head[30] = {0};
+    //-------------Write in file------------------      
+    char dump_head[30] = {0}; //number of bucket
 
     char* word = nullptr; // pointer to node data 
-    char list_data[3000] = {0}; //string with data of each node one after another
+    char* list_data = (char*)calloc(3000, sizeof(char)); //string with data of each node one after another
     int list_data_shift = 0; // offset frpm beggining of string
     List_t* tmp_node = nullptr;
     for (size_t i = 0; i < table->array_size; i++)
@@ -282,25 +257,37 @@ HashTableInfo TableDump (HashTable_t* table)
         sprintf(list_data + list_data_shift, "%s", GET_NODE_DATA(tmp_node));
         list_data_shift += strlen(word);
 
-        sprintf(dump_head, "(num: %lu), ", i);
+        sprintf(dump_head, "%lu, ", i);
         sprintf(table_data + table_data_shift, "%s%s\n", dump_head, list_data);
         
         table_data_shift += list_data_shift + strlen(dump_head) + 1;
         list_data_shift = 0;
     }
-
+    
     fwrite(table_data, sizeof(char), table_data_shift, output_info.file);
+    //-------------------------------------------      
 
     free(table_data);
+    free(list_data);
     fclose(output_info.file);
 
     return kGoodTable;
 }
 
 
-HashTableInfo CollectListNodeData ()
-{
+// //returns index of elem in array of hash table 
+// HashTableInfo TableSearch (const char* to_search, size_t* found, HashTable_t* table)
+// {
+//     *found = 0;
+
+//     uint32_t key = MurmurHash2 (to_search, strlen(to_search) );   
+//     int number = 0;  
+
+//     if (  )
+//         return kElemNotFound;  
+//     else 
+//         return kElemFound;
+//         // GetNode (table->array[key].bucket, number);    //increment counter
+// }
 
 
-    return kGoodTable;
-}

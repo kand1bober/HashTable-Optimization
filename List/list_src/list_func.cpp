@@ -155,19 +155,17 @@ ListInfo_t TextListDump (List_t* list)
 */
 int ListFindNode (List_t* list, const char* string)
 {
-    List_t* tmp_node = list;
+    List_t* tmp_node = list->next;
     List_t* next_node = nullptr;
     int iter = 0;
 
     while (1)
     {   
-        // printf("find %d, word: \"%s\", tmp: %p\n", iter, string, tmp_node);
-        
         next_node = tmp_node->next;
 
         if (next_node)
         {
-            if (next_node != list)
+            if (tmp_node != list)
             {
                 if (!strcmp( GET_NODE_DATA(tmp_node), string))
                 {
