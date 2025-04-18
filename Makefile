@@ -15,6 +15,16 @@ TO_REMOVE_RESOURCES = /home/vyacheslav/HashTable/HashTable/table_dump/table_dump
 
 EXECUTABLE = hashtable
 
+
+#----------------------------
+TEST	:= 1
+
+ifeq ($(TEST), 1)
+CFLAGS += -DTESTS
+GAME := 0
+endif
+#----------------------------
+
 all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS_TABLE) $(OBJECTS_LIST)
@@ -26,3 +36,4 @@ $(EXECUTABLE): $(OBJECTS_TABLE) $(OBJECTS_LIST)
 clean:
 	@rm -rf $(TO_REMOVE_RESOURCES)	
 	@rm -rf $(EXECUTABLE)	
+	

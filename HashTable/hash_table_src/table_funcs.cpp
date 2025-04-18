@@ -1,4 +1,4 @@
-#include "../hash_table_headers/hash_table.h"
+#include "../hash_table_headers/table_funcs.h"
 
 
 HashTableInfo HashTableCtor (HashTable_t* table)

@@ -1,5 +1,4 @@
-#include "../hash_table_headers/hash_table.h"
-
+#include "../hash_table_headers/table_funcs.h"
 int main ()
 {
     HashTable_t fast_table = {}; 
@@ -9,11 +8,13 @@ int main ()
 
     TableInput(&fast_table, &slow_table);
 
+    TableVerificate(&fast_table, &slow_table);
+
     TableDump(&fast_table);
     
-    // WorkTableTest(&fast_table, &slow_table);
-
-    SearchTableTest(&fast_table, &slow_table); //many searches 
+    NO_TESTS(TableWorkTest(&fast_table, &slow_table);)  //looped search and answer
+    
+    ON_TESTS(TableSearchTest(&fast_table, &slow_table);) //cycled search and measure time
 
     HashTableDtor(&fast_table);
     HashTableDtor(&slow_table);

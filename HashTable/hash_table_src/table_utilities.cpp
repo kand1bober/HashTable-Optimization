@@ -1,4 +1,21 @@
-#include "../hash_table_headers/hash_table.h"
+#include "../hash_table_headers/table_funcs.h"
+
+HashTableInfo GetFileInfo (TextInfo* text_info, const char* filename, const char* open_mode)
+{
+    text_info->file = fopen(filename, open_mode);
+    if (!text_info->file)
+    {
+        printf("Error in opening file\n");
+        exit(1);
+    }
+
+    struct stat file_info = {};
+    stat(filename, &file_info);
+    text_info->size = (unsigned long int)(file_info.st_size) + 1; // + final '\0';
+
+    return kGoodTable;
+}
+
 
 HashTableInfo OpenFile (TextInfo* text_info, const char* filename, const char* open_mode)
 {
@@ -22,12 +39,8 @@ HashTableInfo OpenFile (TextInfo* text_info, const char* filename, const char* o
         }
         case 'w': //write
         {
-            text_info->file = fopen(filename, "w");
-            if (!text_info->file)
-            {
-                printf("Error in opening file\n");
-                exit(1);
-            }
+            GetFileInfo(text_info, filename, "w");
+            text_info->size = 0;
 
             break;      
         }
@@ -40,22 +53,6 @@ HashTableInfo OpenFile (TextInfo* text_info, const char* filename, const char* o
     return kGoodTable;
 }
 
-
-HashTableInfo GetFileInfo (TextInfo* text_info, const char* filename, const char* open_mode)
-{
-    text_info->file = fopen(filename, open_mode);
-    if (!text_info->file)
-    {
-        printf("Error in opening file\n");
-        exit(1);
-    }
-
-    struct stat file_info = {};
-    stat(filename, &file_info);
-    text_info->size = (unsigned long int)(file_info.st_size) + 1; // + final '\0';
-
-    return kGoodTable;
-}
 
 
 HashTableInfo DeleteSlashN (TextInfo* text_info)

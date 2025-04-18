@@ -1,11 +1,11 @@
-#include "../hash_table_headers/hash_table.h"
+#include "../hash_table_headers/table_funcs.h"
 
 /*
 * Simple test of HashTable work concept
 *
 * To check results, see "table_dump.csv" table
 */
-HashTableInfo WorkTableTest (HashTable_t* fast_table, HashTable_t* slow_table)
+HashTableInfo TableWorkTest (HashTable_t* fast_table, HashTable_t* slow_table)
 {
     size_t arr_index = 0;
     int bucket_index = 0;
@@ -33,67 +33,6 @@ HashTableInfo WorkTableTest (HashTable_t* fast_table, HashTable_t* slow_table)
 }
 
 
-/*
-* Repeated search of all word from table database in table
-* 
-* 1st & 2nd args -- tables, where to search 
-*
-* 3rd arg --
-*/
-HashTableInfo SearchTableTest (HashTable_t* fast_table, HashTable_t* slow_table)
-{   
-    TextInfo text_info = {};
-
-    OpenFile(&text_info, kParsedFile, "r");
-    DeleteSlashN(&text_info);
-
-    int word_length = 0;
-    char* text_ptr = text_info.array;
-
-    size_t arr_index = 0;
-    int bucket_index = 0;
-    char word[kLongestWord] = {0};
-
-    for (size_t i = 0; i < text_info.words_count; i++)
-    {
-        word_length = strlen(text_ptr);
-        strncpy(word, text_ptr, word_length + 1);
-        arr_index = TableSearch(fast_table, slow_table, word, &bucket_index);
-
-        // if (arr_index >= 0)
-        // {
-        //     printf("\n---------------\n"
-        //            "\"%s\"\n"
-        //            "bucket: %lu\n"
-        //            "pos in bucket: %d\n"
-        //            "---------------\n", text_ptr, arr_index, bucket_index);
-        // }
-        // else  
-        // {
-        //     printf("No such element in HashTable\n");
-        //     exit(1);
-        // }
-
-        if (arr_index > kUsedCaseSize)
-        {
-            printf("No such element in HashTable\n");
-            exit(1);
-        }
-
-        text_ptr += word_length + 1;
-    }
-
-    printf("=====================================\n"
-           "Search in HashTable works correctly !\n"
-           "=====================================\n");
-
-    free(text_info.array);
-    fclose(text_info.file);
-
-    return kGoodSearchTest;
-}
-
-
 HashTableInfo TableDump (HashTable_t* table)
 {   
     TextInfo src_info = {};
@@ -114,7 +53,7 @@ HashTableInfo TableDump (HashTable_t* table)
     char dump_head[30] = {0}; //number of bucket
 
     char* word = nullptr; // pointer to node data 
-    char* list_data = (char*)calloc(kLongestWord * 25, sizeof(char)); //string with data of each node one after another
+    char* list_data = (char*)calloc(kLongestWord * 1500 / kUsedCaseSize * 25, sizeof(char)); //string with data of each node one after another
     int list_data_shift = 0; // offset frpm beggining of string
     List_t* tmp_node = nullptr;
     for (size_t i = 0; i < table->array_size; i++)
@@ -150,4 +89,104 @@ HashTableInfo TableDump (HashTable_t* table)
     fclose(src_info.file);
 
     return kGoodTable;
+}
+
+
+/*
+* Repeated search of all word from table database in table
+* 
+* 1st & 2nd args -- tables, where to search 
+*
+* 3rd arg --
+*/
+HashTableInfo TableVerificate (HashTable_t* fast_table, HashTable_t* slow_table)
+{   
+    TextInfo text_info = {};
+
+    OpenFile(&text_info, kParsedFile, "r");
+    DeleteSlashN(&text_info);
+
+    int word_length = 0;
+    char* text_ptr = nullptr;
+
+    size_t arr_index = 0;
+    int bucket_index = 0;
+    char word[kLongestWord] = {0};
+
+    text_ptr = text_info.array;
+
+    for (size_t i = 0; i < text_info.words_count; i++)
+    {
+        word_length = strlen(text_ptr);
+        strncpy(word, text_ptr, word_length + 1);
+        arr_index = TableSearch(fast_table, slow_table, word, &bucket_index);
+
+        if (arr_index > kUsedCaseSize)
+        {
+            printf("No such element in HashTable\n");
+            exit(1);
+        }
+
+        text_ptr += word_length + 1;
+    }
+
+
+    printf("=========== VERIFICATION ============\n"
+           "Search in HashTable works correctly !\n"
+           "=====================================\n");
+
+    free(text_info.array);
+    fclose(text_info.file);
+
+    return kGoodSearchTest;
+}
+
+
+
+/*
+* Repeated search of all word from table database in table? but not checking for correctness
+* 
+* 1st & 2nd args -- tables, where to search 
+*
+* 3rd arg --
+*/
+HashTableInfo TableSearchTest (HashTable_t* fast_table, HashTable_t* slow_table /*iterations (j)*/)
+{   
+    TextInfo text_info = {};
+
+    OpenFile(&text_info, kParsedFile, "r");
+    DeleteSlashN(&text_info);
+
+    int word_length = 0;
+    char* text_ptr = nullptr;
+
+    int bucket_index = 0;
+    char word[kLongestWord] = {0};
+
+    uint64_t ticks_start = 0, ticks_end = 0;
+
+    ticks_start = __rdtsc();
+    for (int j = 0; j < 150; j++)
+    {
+        text_ptr = text_info.array;
+
+        for (size_t i = 0; i < text_info.words_count; i++)
+        {
+            word_length = strlen(text_ptr);
+            strncpy(word, text_ptr, word_length + 1);
+            TableSearch(fast_table, slow_table, word, &bucket_index);
+
+            text_ptr += word_length + 1;
+        }
+    }
+    ticks_end = __rdtsc();
+
+    printf("=====================================\n"
+           "Time: %lu\n"
+           "=====================================\n", (ticks_end - ticks_start) / 150);
+
+    free(text_info.array);
+    fclose(text_info.file);
+
+    return kGoodSearchTest;
 }
