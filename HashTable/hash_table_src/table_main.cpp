@@ -10,11 +10,13 @@ int main ()
     TableInput(&fast_table, &slow_table);
 
     TableDump(&fast_table);
+    
+    // WorkTableTest(&fast_table, &slow_table);
+
+    SearchTableTest(&fast_table, &slow_table); //many searches 
 
     HashTableDtor(&fast_table);
     HashTableDtor(&slow_table);
-
-    // Test(); //many searches 
 
     return 0;
 }

@@ -44,35 +44,35 @@ HashTableInfo HashTableDtor (HashTable_t* table)
 }
 
 
-HashTableInfo TableInput (HashTable_t* fast_table, HashTable_t* slow_table)
+HashTableInfo OpenFile (TextInfo* text_info)
 {
-    TextInfo text_info = {};   
-
-    //------------------OPEN---------------------
-    text_info.file = fopen(kParsedFile, "r");
+    text_info->file = fopen(kParsedFile, "r");
 
     struct stat file_info = {};
 
     stat(kParsedFile, &file_info);
 
-    text_info.size = (unsigned long int)file_info.st_size + 1; // + final '\0';
+    text_info->size = (unsigned long int)(file_info.st_size + 1); // + final '\0';
  
-    text_info.array = (char*)malloc(text_info.size);
-    if (!text_info.array)
+    text_info->array = (char*)malloc(text_info->size);
+    if (!text_info->array)
     {
         printf("\nError in allocating memory\n");
         exit(1);
     }
     
-    fseek(text_info.file, 0, SEEK_SET);
-    fread(text_info.array, sizeof(char), text_info.size, text_info.file);
-    //-------------------------------------------
+    fseek(text_info->file, 0, SEEK_SET);
+    fread(text_info->array, sizeof(char), text_info->size, text_info->file);
 
-    //--------------Delete '\n'------------------
-    char* text_ptr = text_info.array;
+    return kGoodTable;
+}
+
+HashTableInfo DeleteSlashN (TextInfo* text_info)
+{
+    char* text_ptr = text_info->array;
     char ch = 0;    
     size_t word_counter = 0;
-    for (size_t i = 0; i < text_info.size; i++)
+    for (size_t i = 0; i < text_info->size; i++)
     {
         ch = *(text_ptr + i);
         if (ch == '\n')
@@ -81,8 +81,20 @@ HashTableInfo TableInput (HashTable_t* fast_table, HashTable_t* slow_table)
             word_counter++;
         }
     }
-    text_info.words_count = word_counter;
-    //-------------------------------------------
+
+    text_info->words_count = word_counter;
+
+    return kGoodTable;
+}
+
+
+HashTableInfo TableInput (HashTable_t* fast_table, HashTable_t* slow_table)
+{
+    TextInfo text_info = {};
+
+    OpenFile(&text_info);
+
+    DeleteSlashN(&text_info);
 
     LoadTable(&text_info, fast_table, slow_table);
 
@@ -103,13 +115,13 @@ HashTableInfo TableInput (HashTable_t* fast_table, HashTable_t* slow_table)
 HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable_t* slow_table)
 {
     char word[kLongestWord] = {0};
-    size_t shift = 0;
+    size_t offset = 0;
     int word_length = 0;
     for (size_t i = 0; i < text_info->words_count; i++)
     {
-        word_length = strlen(text_info->array + shift) + 1; // measure word length + '\0'
-        strncpy(word, text_info->array + shift, word_length); // take the word 
-        shift += (word_length); // shift = skip word + '\0'
+        word_length = strlen(text_info->array + offset) + 1; // measure word length + '\0'
+        strncpy(word, text_info->array + offset, word_length); // take the word 
+        offset += (word_length); // offset = skip word + '\0'
         
         // if (word_length <= kFastTableMaxLen)
         // {
@@ -215,17 +227,8 @@ uint32_t MurmurHash2 (const char* key, unsigned int len)
 HashTableInfo TableDump (HashTable_t* table)
 {   
     TextInfo output_info = {};
-    //------------------OPEN---------------------
-    output_info.file = fopen(kDumpFile, "w");
 
-    struct stat file_info = {};
-
-    stat(kParsedFile, &file_info);
-
-    output_info.size = (unsigned long int)file_info.st_size * 2; // с запасом (так называемым горемыкой) 
-
-    fseek(output_info.file, 0, SEEK_SET);
-    fread(output_info.array, sizeof(char), output_info.size, output_info.file);
+    OpenFile(&output_info);
 
     size_t table_data_shift = 0;
     char* table_data = (char*)calloc(output_info.size, sizeof(char));
@@ -233,8 +236,7 @@ HashTableInfo TableDump (HashTable_t* table)
     {
         printf("\nError in allocating memory\n");
         exit(1);
-    }
-    //-------------------------------------------      
+    } 
 
     //-------------Write in file------------------      
     char dump_head[30] = {0}; //number of bucket
@@ -269,6 +271,7 @@ HashTableInfo TableDump (HashTable_t* table)
 
     free(table_data);
     free(list_data);
+    free(output_info.array);
     fclose(output_info.file);
 
     return kGoodTable;
@@ -276,15 +279,15 @@ HashTableInfo TableDump (HashTable_t* table)
 
 
 /*
-* 1st arf -- hashtable, where to search //TODO: fast and slow instead of one 
+* 1st & 2nd args -- hashtables, where to search //TODO: fast and slow instead of one 
 *
-* 2nd arg -- word to search 
+* 3rd arg -- word to search 
 * 
-* 3rd arg -- index of word in this bucket 
+* 4th arg -- index of word in this bucket 
 *
 * return = number of bucket, if found; if not, then return < 0
 */
-size_t TableSearch (HashTable_t* table, const char* to_search, int* bucket_index)
+size_t TableSearch (HashTable_t* fast_table, HashTable_t* slow_table, const char* to_search, int* bucket_index)
 {
     int local_bucket_index = 0;
 
@@ -292,19 +295,105 @@ size_t TableSearch (HashTable_t* table, const char* to_search, int* bucket_index
 
     uint32_t key = MurmurHash2 (to_search, strlen(to_search) );   
 
-    local_bucket_index = ListFindNode(table->array[key].bucket, to_search);
+    local_bucket_index = ListFindNode(fast_table->array[key].bucket, to_search); //поменять при добавлении второй таблицы
 
     *bucket_index = local_bucket_index;
 
-    return( (local_bucket_index > 0) ? key : -1 );
+    return( (local_bucket_index >= 0) ? key : -1 );
 }
 
 
-// //===============================================
-// HashTableInfo SearchTableTest (HashTable_t* table /*массив со всеми словами (мб без повторов)*/)
-// {   
-    
+//=================== TESTS =====================
+/*
+* Simple test of HashTable work concept
+*
+* To check results, see "table_dump.csv" table
+*/
+HashTableInfo WorkTableTest (HashTable_t* fast_table, HashTable_t* slow_table)
+{
+    size_t arr_index = 0;
+    int bucket_index = 0;
+    char word[kLongestWord] = {0};
+    while(1)
+    {
+        scanf("%s", word);
+        getchar();  // skip '\n'
+        arr_index = TableSearch(fast_table, slow_table, word, &bucket_index );
+        if (arr_index > 0)
+        {
+            printf("\n---------------\n"
+                   "Word found\n"
+                   "bucket: %lu\n"
+                   "position in bucket: %d\n"
+                   "---------------\n", arr_index, bucket_index);
+        }
+        else  
+        {
+            printf("No such element in HashTable\n");
+        }
+    }
 
-//     return kGoodSearchTest;
-// }
+    return kGoodTable;
+}
 
+
+/*
+* Repeated search of all word from table database in table
+* 
+* 1st & 2nd args -- tables, where to search 
+*
+* 3rd arg --
+*/
+HashTableInfo SearchTableTest (HashTable_t* fast_table, HashTable_t* slow_table)
+{   
+    TextInfo text_info = {};
+
+    OpenFile(&text_info);
+    DeleteSlashN(&text_info);
+
+    int word_length = 0;
+    char* text_ptr = text_info.array;
+
+    size_t arr_index = 0;
+    int bucket_index = 0;
+    char word[kLongestWord] = {0};
+
+    for (size_t i = 0; i < text_info.words_count; i++)
+    {
+        word_length = strlen(text_ptr);
+        strncpy(word, text_ptr, word_length + 1);
+        arr_index = TableSearch(fast_table, slow_table, word, &bucket_index);
+
+        // if (arr_index >= 0)
+        // {
+        //     printf("\n---------------\n"
+        //            "\"%s\"\n"
+        //            "bucket: %lu\n"
+        //            "pos in bucket: %d\n"
+        //            "---------------\n", text_ptr, arr_index, bucket_index);
+        // }
+        // else  
+        // {
+        //     printf("No such element in HashTable\n");
+        //     exit(1);
+        // }
+
+        if (arr_index > kUsedCaseSize)
+        {
+            printf("No such element in HashTable\n");
+            exit(1);
+        }
+
+        text_ptr += word_length + 1;
+    }
+
+    printf("=====================================\n"
+           "Search in HashTable works correctly !\n"
+           "=====================================\n");
+
+    free(text_info.array);
+    fclose(text_info.file);
+
+    return kGoodSearchTest;
+}
+//===============================================
