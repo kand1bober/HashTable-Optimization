@@ -1,6 +1,5 @@
 #include "../list_headers/list_func.h"
 #include "../list_headers/list_info.h"
-#include "../list_headers/list_dot.h"
 
 List_t* ListCreateNode (const char* string)
 {
@@ -148,8 +147,6 @@ ListInfo_t TextListDump (List_t* list)
 * 1st arg -- list, where to find
 * 
 * 2nd arg -- string to search 
-*
-* 3rd arg -- pointer to return value of function = number of found element in list 
 *
 * return -- number of elem node, if found; (< 0), if not found
 */

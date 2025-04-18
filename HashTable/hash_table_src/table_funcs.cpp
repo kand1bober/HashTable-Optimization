@@ -275,19 +275,36 @@ HashTableInfo TableDump (HashTable_t* table)
 }
 
 
-// //returns index of elem in array of hash table 
-// HashTableInfo TableSearch (const char* to_search, size_t* found, HashTable_t* table)
-// {
-//     *found = 0;
+/*
+* 1st arf -- hashtable, where to search //TODO: fast and slow instead of one 
+*
+* 2nd arg -- word to search 
+* 
+* 3rd arg -- index of word in this bucket 
+*
+* return = number of bucket, if found; if not, then return < 0
+*/
+size_t TableSearch (HashTable_t* table, const char* to_search, int* bucket_index)
+{
+    int local_bucket_index = 0;
 
-//     uint32_t key = MurmurHash2 (to_search, strlen(to_search) );   
-//     int number = 0;  
+    // int word_length = strlen(to_search);
 
-//     if (  )
-//         return kElemNotFound;  
-//     else 
-//         return kElemFound;
-//         // GetNode (table->array[key].bucket, number);    //increment counter
+    uint32_t key = MurmurHash2 (to_search, strlen(to_search) );   
+
+    local_bucket_index = ListFindNode(table->array[key].bucket, to_search);
+
+    *bucket_index = local_bucket_index;
+
+    return( (local_bucket_index > 0) ? key : -1 );
+}
+
+
+// //===============================================
+// HashTableInfo SearchTableTest (HashTable_t* table /*массив со всеми словами (мб без повторов)*/)
+// {   
+    
+
+//     return kGoodSearchTest;
 // }
-
 

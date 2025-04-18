@@ -11,10 +11,10 @@
 #ifndef HASH_TABLE_HEADER
 #define HASH_TABLE_HEADER
 
-#define kUsedCaseSize 16000
+#define kUsedCaseSize 1500
 #define kParsedFile "/home/vyacheslav/HashTable/resources/Lotr_parsed.txt"
 #define kFastTableMaxLen 32
-#define kLongestWord 50
+#define kLongestWord 70
 
 #define kDumpFile "/home/vyacheslav/HashTable/HashTable/table_dump/table_dump.csv"
 
@@ -28,10 +28,12 @@ typedef struct
 
 typedef enum 
 {
-    kGoodTable = 1,
-    kBadTable = 2,
-    kElemFound,
-    kElemNotFound,
+    kGoodTable = 6,
+    kBadTable,
+
+    kGoodSearchTest,
+    kBadSearchTest
+
 } HashTableInfo;
 
 typedef struct
@@ -59,7 +61,7 @@ HashTableInfo LoadTable (TextInfo* text_info, HashTable_t *fast_table, HashTable
 
 uint32_t MurmurHash2 (const char* key, unsigned int len);
 
-HashTableInfo TableSearch (const char* to_search, size_t* found, HashTable_t* table);
+size_t TableSearch (HashTable_t* table, const char* to_search, int* bucket_index);
 
 HashTableInfo TableDump (HashTable_t* table);
 
