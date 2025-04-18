@@ -11,6 +11,8 @@ SOURCES_LIST = $(wildcard $(SOURCES_DIR_LIST)/*cpp )
 OBJECTS_TABLE = $(SOURCES_TABLE:.cpp =.o) 
 OBJECTS_LIST = $(SOURCES_LIST:.cpp =.o) 
 
+TO_REMOVE_RESOURCES = /home/vyacheslav/HashTable/HashTable/table_dump/table_dump.csv
+
 EXECUTABLE = hashtable
 
 all: $(EXECUTABLE)
@@ -22,4 +24,5 @@ $(EXECUTABLE): $(OBJECTS_TABLE) $(OBJECTS_LIST)
 	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
-	@rm $(EXECUTABLE)	
+	@rm -rf $(TO_REMOVE_RESOURCES)	
+	@rm -rf $(EXECUTABLE)	

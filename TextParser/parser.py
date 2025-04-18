@@ -14,7 +14,9 @@ def Parser(input_file, output_file):
     
     # Записываем каждое слово на новой строке в выходной файл
     with open(output_file, 'w', encoding='utf-8') as f:
-        f.write('\n'.join(words))
+        f.write('\n'.join(words) + '\n')
+
+    ('\n')
 #-----------------------------------------------
 
 
