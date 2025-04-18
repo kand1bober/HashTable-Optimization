@@ -132,8 +132,7 @@ HashTableInfo TableVerificate (HashTable_t* fast_table, HashTable_t* slow_table)
 
 
     printf("=========== VERIFICATION ============\n"
-           "Search in HashTable works correctly !\n"
-           "=====================================\n");
+           "Search in HashTable works correctly !\n");
 
     free(text_info.array);
     fclose(text_info.file);
@@ -150,7 +149,7 @@ HashTableInfo TableVerificate (HashTable_t* fast_table, HashTable_t* slow_table)
 *
 * 3rd arg --
 */
-HashTableInfo TableSearchTest (HashTable_t* fast_table, HashTable_t* slow_table /*iterations (j)*/)
+HashTableInfo TableSearchTest (HashTable_t* fast_table, HashTable_t* slow_table, ProgConfig* config)
 {   
     TextInfo text_info = {};
 
@@ -163,27 +162,34 @@ HashTableInfo TableSearchTest (HashTable_t* fast_table, HashTable_t* slow_table 
     int bucket_index = 0;
     char word[kLongestWord] = {0};
 
+    int runs = config->runs;
+    int searches = config->searches;
+
     uint64_t ticks_start = 0, ticks_end = 0;
 
-    ticks_start = __rdtsc();
-    for (int j = 0; j < 150; j++)
+    printf("\n===============TESTS================\n"
+            "runs: %d, searches: %d\n\n", config->runs, config->searches);
+    for (int k = 0; k < runs; k++)
     {
-        text_ptr = text_info.array;
-
-        for (size_t i = 0; i < text_info.words_count; i++)
+        ticks_start = __rdtsc();
+        for (int j = 0; j < searches; j++)
         {
-            word_length = strlen(text_ptr);
-            strncpy(word, text_ptr, word_length + 1);
-            TableSearch(fast_table, slow_table, word, &bucket_index);
+            text_ptr = text_info.array;
 
-            text_ptr += word_length + 1;
+            for (size_t i = 0; i < text_info.words_count; i++)
+            {
+                word_length = strlen(text_ptr);
+                strncpy(word, text_ptr, word_length + 1);
+                TableSearch(fast_table, slow_table, word, &bucket_index);
+
+                text_ptr += word_length + 1;
+            }
         }
-    }
-    ticks_end = __rdtsc();
+        ticks_end = __rdtsc();
 
-    printf("=====================================\n"
-           "Time: %lu\n"
-           "=====================================\n", (ticks_end - ticks_start) / 150);
+        printf("%d time for one full run: %lu\n", k, (ticks_end - ticks_start) / searches );
+    }
+    printf("=====================================\n");
 
     free(text_info.array);
     fclose(text_info.file);

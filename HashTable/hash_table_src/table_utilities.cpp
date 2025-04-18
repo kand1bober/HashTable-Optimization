@@ -1,4 +1,4 @@
-#include "../hash_table_headers/table_funcs.h"
+#include "../hash_table_headers/table_utilities.h"
 
 HashTableInfo GetFileInfo (TextInfo* text_info, const char* filename, const char* open_mode)
 {
@@ -133,3 +133,28 @@ uint32_t MurmurHash2 (const char* key, unsigned int len)
     return h;
 }
 
+
+HashTableInfo GetCmdArguments (int argc, char* argv[], ProgConfig* config)
+{
+    for(int i = 1; i < argc; i++)
+    {
+        if (!strcmp(argv[i], "-searches"))
+        {
+            i++;
+            config->searches = atoi(argv[i]);
+        }
+        else if (!strcmp(argv[i], "-runs"))
+        {
+            i++;
+            config->runs = atoi(argv[i]);
+        }
+        else
+        {
+            printf("iter %d\n", i);
+            printf("Wrong argument\n");
+            exit(1);
+        }
+    }
+
+    return kGoodTable;
+}

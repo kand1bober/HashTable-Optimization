@@ -1,23 +1,28 @@
 #include "../hash_table_headers/table_funcs.h"
-int main ()
+#include "../hash_table_headers/table_utilities.h"
+
+int main (int argc, char* argv[])
 {
-    HashTable_t fast_table = {}; 
-    HashTable_t slow_table = {};
-    HashTableCtor(&fast_table); 
-    HashTableCtor(&slow_table);
+    ProgConfig config = {};
+    GetCmdArguments(argc, argv, &config); //get args
 
-    TableInput(&fast_table, &slow_table);
+    HashTable_t fast_table = {}; //
+    HashTable_t slow_table = {}; //
+    HashTableCtor(&fast_table);  // create tables 
+    HashTableCtor(&slow_table);  //
 
-    TableVerificate(&fast_table, &slow_table);
+    TableInput(&fast_table, &slow_table); // input words 
 
-    TableDump(&fast_table);
+    TableVerificate(&fast_table, &slow_table); // verificate
+
+    TableDump(&fast_table); // csv dump 
     
     NO_TESTS(TableWorkTest(&fast_table, &slow_table);)  //looped search and answer
     
-    ON_TESTS(TableSearchTest(&fast_table, &slow_table);) //cycled search and measure time
+    ON_TESTS(TableSearchTest(&fast_table, &slow_table, &config);) //cycled search and measure time
 
-    HashTableDtor(&fast_table);
-    HashTableDtor(&slow_table);
+    HashTableDtor(&fast_table); // destroy tables
+    HashTableDtor(&slow_table); // 
 
     return 0;
 }

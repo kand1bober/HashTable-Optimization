@@ -33,6 +33,12 @@ typedef struct
     char* array; 
 } TextInfo; // file and it's text in array
 
+typedef struct
+{
+    int runs;
+    int searches;
+}ProgConfig;
+
 typedef enum 
 {
     kGoodTable = 6,
@@ -79,6 +85,8 @@ HashTableInfo DeleteSlashN (TextInfo* text_info);
 HashTableInfo TableDump (HashTable_t* table);
 
 uint32_t MurmurHash2 (const char* key, unsigned int len);
+
+HashTableInfo GetCmdArguments (int argc, char* argv[], ProgConfig* config);
 //-----------------------------------------------
 
 //-------------------- DLC ----------------------
@@ -86,7 +94,7 @@ HashTableInfo TableWorkTest (HashTable_t* fast_table, HashTable_t* slow_table);
 
 HashTableInfo TableVerificate (HashTable_t* fast_table, HashTable_t* slow_table);
 
-HashTableInfo TableSearchTest (HashTable_t* fast_table, HashTable_t* slow_table);
+HashTableInfo TableSearchTest (HashTable_t* fast_table, HashTable_t* slow_table, ProgConfig* config);
 //-----------------------------------------------
 
 #endif
