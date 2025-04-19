@@ -21,7 +21,6 @@ TEST	:= 1
 
 ifeq ($(TEST), 1)
 CFLAGS += -DTESTS
-GAME := 0
 endif
 #----------------------------
 
@@ -36,4 +35,5 @@ $(EXECUTABLE): $(OBJECTS_TABLE) $(OBJECTS_LIST)
 clean:
 	@rm -rf $(TO_REMOVE_RESOURCES)	
 	@rm -rf $(EXECUTABLE)	
+	
 	

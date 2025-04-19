@@ -84,8 +84,6 @@ HashTableInfo DeleteSlashN (TextInfo* text_info);
 
 HashTableInfo TableDump (HashTable_t* table);
 
-uint32_t MurmurHash2 (const char* key, unsigned int len);
-
 HashTableInfo GetCmdArguments (int argc, char* argv[], ProgConfig* config);
 //-----------------------------------------------
 
@@ -95,6 +93,18 @@ HashTableInfo TableWorkTest (HashTable_t* fast_table, HashTable_t* slow_table);
 HashTableInfo TableVerificate (HashTable_t* fast_table, HashTable_t* slow_table);
 
 HashTableInfo TableSearchTest (HashTable_t* fast_table, HashTable_t* slow_table, ProgConfig* config);
+//-----------------------------------------------
+
+//----------------- Analyze ---------------------
+int CheckTableDispersia (HashTable_t* table);
+//-----------------------------------------------
+
+//-----------------------------------------------
+uint32_t MurmurHash2 (const char* key, unsigned int len);
+
+uint32_t CRC32 (const char* data);
+
+uint32_t AsciiSumHash (const char* data);
 //-----------------------------------------------
 
 #endif
