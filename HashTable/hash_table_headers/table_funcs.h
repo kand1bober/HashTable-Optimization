@@ -5,6 +5,8 @@
 #include <x86intrin.h>
 #include <xmmintrin.h>
 #include <immintrin.h>
+#include <nmmintrin.h>
+#include <mmintrin.h>
 
 #include "../../List/list_headers/list_func.h"
 #include "table_config.h"
@@ -13,10 +15,14 @@
 #define HASH_TABLE_HEADER
 
 #define kParsedFile "/home/vyacheslav/HashTable/resources/Lotr_parsed.txt"
-#define kDumpFile "/home/vyacheslav/HashTable/HashTable/table_dump/table_dump.csv"
 
-#define kUsedCaseSize 1500
-#define kFastTableMaxLen 32
+#define kDumpFileFastTable "/home/vyacheslav/HashTable/HashTable/table_dump/fast_table_dump.csv"
+#define kDumpFileSlowTable "/home/vyacheslav/HashTable/HashTable/table_dump/slow_table_dump.csv"
+
+#define kFastTableSize 1500
+#define kSlowTableSize 750
+
+#define kFastTableMaxLen 8
 #define kLongestWord 70
 
 #define CHOOSE_TABLE(res_table, table_1, table_2, word) \
@@ -62,15 +68,19 @@ typedef struct
 } HashTable_t;
 
 //------------- Main functions ------------------
-HashTableInfo HashTableCtor (HashTable_t* table);
+HashTableInfo HashTableCtor (HashTable_t* table, size_t table_size);
 
-HashTableInfo HashTableDtor (HashTable_t* table);
+HashTableInfo HashTableDtor (HashTable_t* table, size_t table_size);
 
 HashTableInfo TableInput (HashTable_t* fast_table, HashTable_t* slow_table);
 
 HashTableInfo LoadTable (TextInfo* text_info, HashTable_t *fast_table, HashTable_t *slow_table);
 
-HashTableInfo TableAdd (const char* word, int word_length, HashTable_t* table);
+HashTableInfo FastTableAdd(const char* word, int word_length, HashTable_t* fast_table);
+
+HashTableInfo SlowTableAdd(const char* word, HashTable_t* slow_table);
+
+HashTableInfo TableAdd(const char* word, HashTable_t* table, uint32_t key);
 
 size_t TableSearch (HashTable_t* fast_table, HashTable_t* slow_table, const char* to_search, int* bucket_index);
 //-----------------------------------------------
@@ -82,7 +92,7 @@ HashTableInfo GetFileInfo (TextInfo* text_info, const char* filename, const char
 
 HashTableInfo DeleteSlashN (TextInfo* text_info);
 
-HashTableInfo TableDump (HashTable_t* table);
+HashTableInfo TableDump (HashTable_t* table, int max_load_factor, const char* dump_file_name);
 
 HashTableInfo GetCmdArguments (int argc, char* argv[], ProgConfig* config);
 //-----------------------------------------------
@@ -99,6 +109,8 @@ HashTableInfo TableSearchTest (HashTable_t* fast_table, HashTable_t* slow_table,
 uint32_t MurmurHash2 (const char* key, unsigned int len);
 
 uint32_t CRC32 (const char* data);
+
+uint32_t IntrinCRC32 (const char* word, int word_length);
 //-----------------------------------------------
 
 #endif

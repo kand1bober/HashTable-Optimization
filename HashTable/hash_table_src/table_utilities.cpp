@@ -107,7 +107,7 @@ HashTableInfo GetCmdArguments (int argc, char* argv[], ProgConfig* config)
 *
 * 2nd arg -- lentgh of string 
 *
-* return -- num of bucket 
+* return -- return value should be divided into size of certain table
 */
 uint32_t MurmurHash2 (const char* key, unsigned int len)
 {
@@ -154,13 +154,16 @@ uint32_t MurmurHash2 (const char* key, unsigned int len)
     h *= m;
     h ^= h >> 15;
 
-    h = h % kUsedCaseSize;   // this part is not from original murmur 
+    h = h;   // this part is not from original murmur 
 
     return h;
 }
 
-
-// normal(left shift), no reverse
+/*
+*  normal(left shift), no reverse
+*
+* return value should be divided into size of certain table
+*/
 uint32_t CRC32 (const char* data)   
 {
     uint32_t crc = 0xFFFFFFFF;
@@ -177,7 +180,29 @@ uint32_t CRC32 (const char* data)
         i++;
     }
     
-    crc = ~crc % kUsedCaseSize;
+    crc = ~crc;
 
     return crc;
+}
+
+
+/*
+* Create key, but not divided by size of table 
+*
+* return value should be divided into size of certain table
+*/
+uint32_t IntrinCRC32 (const char* word, int word_length)
+{
+    uint32_t key = 0;
+ 
+    char extended_word[8] = {0};
+    memcpy(extended_word, word, word_length);  // TODO: интринсик на перенос строки 
+    
+    uint64_t crc_init = 0;
+    memcpy(&crc_init, extended_word, 8);
+
+    uint64_t seed = -1;
+    key = _mm_crc32_u64(seed, crc_init);
+
+    return key;
 }

@@ -1,6 +1,6 @@
 CC = g++
 
-CFLAGS = -fsanitize=address,undefined -D _DEBUG -O0 -Wall -Wextra
+CFLAGS = -fsanitize=address,undefined -D _DEBUG -O3 -Wall -Wextra   -msse3 -msse2 -msse -mavx2 -mavx
 
 SOURCES_DIR_TABLE = List/list_src
 SOURCES_DIR_LIST = HashTable/hash_table_src
@@ -21,7 +21,6 @@ TEST	:= 1
 
 ifeq ($(TEST), 1)
 CFLAGS += -DTESTS
-GAME := 0
 endif
 #----------------------------
 

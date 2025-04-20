@@ -25,7 +25,7 @@ HashTableInfo TableWorkTest (HashTable_t* fast_table, HashTable_t* slow_table)
         }
         else  
         {
-            printf("No such element in HashTable\n");
+            printf("WorkTest: No such element in HashTable\n");
         }
     }
 
@@ -33,13 +33,13 @@ HashTableInfo TableWorkTest (HashTable_t* fast_table, HashTable_t* slow_table)
 }
 
 
-HashTableInfo TableDump (HashTable_t* table)
+HashTableInfo TableDump (HashTable_t* table, int max_load_factor, const char* dump_file_name)
 {   
     TextInfo src_info = {};
     OpenFile(&src_info, kParsedFile, "f");  // get info
 
     TextInfo output_info = {};
-    OpenFile(&output_info, kDumpFile, "w");
+    OpenFile(&output_info, dump_file_name, "w");
 
     size_t table_data_shift = 0;
     char* table_data = (char*)calloc(src_info.size * 2, sizeof(char));
@@ -53,7 +53,7 @@ HashTableInfo TableDump (HashTable_t* table)
     char dump_head[30] = {0}; //number of bucket
 
     char* word = nullptr; // pointer to node data 
-    char* list_data = (char*)calloc(kLongestWord * 1500 / kUsedCaseSize * 25, sizeof(char)); //string with data of each node one after another
+    char* list_data = (char*)calloc(kLongestWord * max_load_factor, sizeof(char)); //string with data of each node one after another
     int list_data_shift = 0; // offset frpm beggining of string
     List_t* tmp_node = nullptr;
     for (size_t i = 0; i < table->array_size; i++)
@@ -121,15 +121,14 @@ HashTableInfo TableVerificate (HashTable_t* fast_table, HashTable_t* slow_table)
         strncpy(word, text_ptr, word_length + 1);
         arr_index = TableSearch(fast_table, slow_table, word, &bucket_index);
 
-        if (arr_index > kUsedCaseSize)
+        if (arr_index > 10000000) //impossible value for table 
         {
-            printf("No such element in HashTable\n");
+            printf("Verification: No such element in HashTable\n");
             exit(1);
         }
 
         text_ptr += word_length + 1;
     }
-
 
     printf("=========== VERIFICATION ============\n"
            "Search in HashTable works correctly !\n");
@@ -139,8 +138,7 @@ HashTableInfo TableVerificate (HashTable_t* fast_table, HashTable_t* slow_table)
 
     return kGoodSearchTest;
 }
-
-
+ 
 
 /*
 * Repeated search of all word from table database in table? but not checking for correctness
