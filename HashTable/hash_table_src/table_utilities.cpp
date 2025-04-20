@@ -76,6 +76,32 @@ HashTableInfo DeleteSlashN (TextInfo* text_info)
 }
 
 
+HashTableInfo GetCmdArguments (int argc, char* argv[], ProgConfig* config)
+{
+    for(int i = 1; i < argc; i++)
+    {
+        if (!strcmp(argv[i], "-searches"))
+        {
+            i++;
+            config->searches = atoi(argv[i]);
+        }
+        else if (!strcmp(argv[i], "-runs"))
+        {
+            i++;
+            config->runs = atoi(argv[i]);
+        }
+        else
+        {
+            printf("iter %d\n", i);
+            printf("Wrong argument\n");
+            exit(1);
+        }
+    }
+
+    return kGoodTable;
+}
+
+
 /*
 * 1st arg -- ptr to string
 *
@@ -134,27 +160,24 @@ uint32_t MurmurHash2 (const char* key, unsigned int len)
 }
 
 
-HashTableInfo GetCmdArguments (int argc, char* argv[], ProgConfig* config)
+// normal(left shift), no reverse
+uint32_t CRC32 (const char* data)   
 {
-    for(int i = 1; i < argc; i++)
+    uint32_t crc = 0xFFFFFFFF;
+    
+    int i = 0;
+    while (data[i] != '\0')
     {
-        if (!strcmp(argv[i], "-searches"))
-        {
-            i++;
-            config->searches = atoi(argv[i]);
+        crc ^= data[i];
+        
+        for (int j = 0; j < 8; j++) {
+            uint32_t mask = -(crc & 1);  // 0xFFFFFFFF если бит=1, иначе 0
+            crc = (crc >> 1) ^ (0xEDB88320 & mask);
         }
-        else if (!strcmp(argv[i], "-runs"))
-        {
-            i++;
-            config->runs = atoi(argv[i]);
-        }
-        else
-        {
-            printf("iter %d\n", i);
-            printf("Wrong argument\n");
-            exit(1);
-        }
+        i++;
     }
+    
+    crc = ~crc % kUsedCaseSize;
 
-    return kGoodTable;
+    return crc;
 }
