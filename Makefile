@@ -37,4 +37,5 @@ $(EXECUTABLE): $(OBJECTS_TABLE) $(OBJECTS_LIST)
 
 clean:
 	@rm -rf $(EXECUTABLE)	
+	@rm -rf perf.data 
 	

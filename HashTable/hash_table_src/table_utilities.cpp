@@ -135,13 +135,11 @@ uint32_t CRC32 (const char* data)
 * return value should be divided into size of certain table
 */
 uint32_t IntrinCRC32 (const char* word, int word_length)
-{
-    uint32_t key = 0;
- 
+{ 
     uint64_t crc_init = 0;
-    memcpy(&crc_init, word, word_length);  // TODO: интринсик на перенос строки 
+    memcpy(&crc_init, word, word_length);
 
-    key = _mm_crc32_u64(-1, crc_init);
+    uint32_t key = _mm_crc32_u64(-1, crc_init);
 
     return key;
 }
