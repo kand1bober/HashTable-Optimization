@@ -1,0 +1,18 @@
+Performance counter stats for './hashtable -runs 30 -searches 10':
+
+         19 071,82 msec task-clock                       #    1,000 CPUs utilized             
+               142      context-switches                 #    7,446 /sec                      
+                20      cpu-migrations                   #    1,049 /sec                      
+             6 425      page-faults                      #  336,885 /sec                      
+    84 163 266 859      cycles                           #    4,413 GHz                       
+     6 210 612 324      stalled-cycles-frontend          #    7,38% frontend cycles idle      
+   225 864 202 134      instructions                     #    2,68  insn per cycle            
+                                                  #    0,03  stalled cycles per insn   
+    54 088 523 032      branches                         #    2,836 G/sec                     
+       430 234 536      branch-misses                    #    0,80% of all branches           
+
+      19,074528916 seconds time elapsed
+
+      19,058830000 seconds user
+       0,013677000 seconds sys
+

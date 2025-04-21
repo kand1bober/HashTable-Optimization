@@ -141,8 +141,7 @@ uint32_t IntrinCRC32 (const char* word, int word_length)
     uint64_t crc_init = 0;
     memcpy(&crc_init, word, word_length);  // TODO: интринсик на перенос строки 
 
-    uint64_t seed = -1;
-    key = _mm_crc32_u64(seed, crc_init);
+    key = _mm_crc32_u64(-1, crc_init);
 
     return key;
 }

@@ -1,6 +1,6 @@
 CC = g++
 
-CFLAGS = -fsanitize=address,undefined -D _DEBUG -O3 -Wall -Wextra   -msse3 -msse2 -msse -mavx2 -mavx
+CFLAGS =  -fsanitize=address,undefined -D _DEBUG -O3 -Wall -Wextra -msse3 -msse2 -msse -mavx2 -mavx
 
 SOURCES_DIR_TABLE = List/list_src
 SOURCES_DIR_LIST = HashTable/hash_table_src
@@ -10,8 +10,6 @@ SOURCES_LIST = $(wildcard $(SOURCES_DIR_LIST)/*cpp )
 
 OBJECTS_TABLE = $(SOURCES_TABLE:.cpp =.o) 
 OBJECTS_LIST = $(SOURCES_LIST:.cpp =.o) 
-
-TO_REMOVE_RESOURCES = /home/vyacheslav/HashTable/HashTable/table_dump/table_dump.csv
 
 EXECUTABLE = hashtable
 
@@ -33,6 +31,5 @@ $(EXECUTABLE): $(OBJECTS_TABLE) $(OBJECTS_LIST)
 	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
-	@rm -rf $(TO_REMOVE_RESOURCES)	
 	@rm -rf $(EXECUTABLE)	
 	
