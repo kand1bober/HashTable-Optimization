@@ -15,7 +15,7 @@
 #define kParsedFile "/home/vyacheslav/HashTable/resources/Lotr_parsed.txt"
 #define kDumpFile "/home/vyacheslav/HashTable/HashTable/table_dump/table_dump.csv"
 
-#define kUsedCaseSize 1500
+#define kUsedCaseSize 905
 #define kFastTableMaxLen 32
 #define kLongestWord 70
 

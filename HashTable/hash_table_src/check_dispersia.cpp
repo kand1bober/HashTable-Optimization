@@ -1,6 +1,6 @@
 #include "../hash_table_headers/table_funcs.h"
 
-#define kOutputFile "/home/vyacheslav/HashTable/HashTable/analyzis/dispersia_2.csv"
+#define kOutputFile "/home/vyacheslav/HashTable/HashTable/hash_table_analyzis/dispersia_3.csv"
 
 int CheckTableDispersia (HashTable_t* table)
 {

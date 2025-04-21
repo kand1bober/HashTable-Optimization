@@ -1,6 +1,6 @@
 CC = g++
 
-CFLAGS = -fsanitize=address,undefined -D _DEBUG -O0 -Wall -Wextra
+CFLAGS = -fsanitize=address,undefined -D _DEBUG -O3 -Wall -Wextra
 
 SOURCES_DIR_TABLE = List/list_src
 SOURCES_DIR_LIST = HashTable/hash_table_src
