@@ -36,3 +36,6 @@ Performance counter stats for './hashtable -runs 30 -searches 10':
 
 
 следующим оптимизируем strcmp
+
+
+ПЕРВАЯ ОПТИМИЗАЦИЯ ЗАКОНЧЕНА 
