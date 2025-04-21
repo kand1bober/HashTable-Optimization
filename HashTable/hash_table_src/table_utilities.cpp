@@ -138,11 +138,16 @@ uint32_t IntrinCRC32 (const char* word, int word_length)
 {
     uint32_t key = 0;
  
-    char extended_word[8] = {0};
-    memcpy(extended_word, word, word_length);  // TODO: интринсик на перенос строки 
+    // char extended_word[8] = {0};
+    // memcpy(extended_word, word, word_length);  // TODO: интринсик на перенос строки 
+    
+    // uint64_t crc_init = 0;
+    // memcpy(&crc_init, extended_word, 8);
+
+    // char extended_word[8] = {0};
     
     uint64_t crc_init = 0;
-    memcpy(&crc_init, extended_word, 8);
+    memcpy(&crc_init, word, word_length);  // TODO: интринсик на перенос строки 
 
     uint64_t seed = -1;
     key = _mm_crc32_u64(seed, crc_init);

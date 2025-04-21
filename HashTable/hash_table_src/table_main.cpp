@@ -22,9 +22,9 @@ int main (int argc, char* argv[])
     
     ON_TESTS(TableSearchTest(&fast_table, &slow_table, &config);) //cycled search and measure time
 
-    //-------------------------------------------
-    CheckTableDispersia(&fast_table, &slow_table);
-    //-------------------------------------------
+    // //-------------------------------------------
+    // CheckTableDispersia(&fast_table, &slow_table);
+    // //-------------------------------------------
 
     HashTableDtor(&fast_table, kFastTableSize); // destroy tables
     HashTableDtor(&slow_table, kSlowTableSize); // 
