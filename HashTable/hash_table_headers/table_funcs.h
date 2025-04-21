@@ -19,8 +19,8 @@
 #define kDumpFileFastTable "/home/vyacheslav/HashTable/HashTable/table_dump/fast_table_dump.csv"
 #define kDumpFileSlowTable "/home/vyacheslav/HashTable/HashTable/table_dump/slow_table_dump.csv"
 
-#define kFastTableSize 1500
-#define kSlowTableSize 750
+#define kFastTableSize 670
+#define kSlowTableSize 234
 
 #define kFastTableMaxLen 8
 #define kLongestWord 70
@@ -106,11 +106,15 @@ HashTableInfo TableSearchTest (HashTable_t* fast_table, HashTable_t* slow_table,
 //-----------------------------------------------
 
 //-------------- Hash Functions -----------------
-uint32_t MurmurHash2 (const char* key, unsigned int len);
-
 uint32_t CRC32 (const char* data);
 
 uint32_t IntrinCRC32 (const char* word, int word_length);
+//-----------------------------------------------
+
+//-----------------------------------------------
+int CheckTableDispersia (HashTable_t* fast_table, HashTable_t* slow_table);
+
+void CollectTableData(HashTable_t* table, size_t table_size, const char* dump_file_name);
 //-----------------------------------------------
 
 #endif

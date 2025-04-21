@@ -103,63 +103,6 @@ HashTableInfo GetCmdArguments (int argc, char* argv[], ProgConfig* config)
 
 
 /*
-* 1st arg -- ptr to string
-*
-* 2nd arg -- lentgh of string 
-*
-* return -- return value should be divided into size of certain table
-*/
-uint32_t MurmurHash2 (const char* key, unsigned int len)
-{
-    const uint32_t m = 0x5bd1e995;
-    const uint32_t seed = 0;
-    const uint32_t r = 24;
-
-    uint32_t h = seed ^ len;
-
-    const unsigned char * data = (const unsigned char *)key;
-    uint32_t k = 0;
-
-    while (len >= 4)
-    {
-        k  = data[0];
-        k |= data[1] << 8;
-        k |= data[2] << 16;
-        k |= data[3] << 24;
-
-        k *= m;
-        k ^= k >> r;
-        k *= m;
-
-        h *= m;
-        h ^= k;
-
-        data += 4;
-        len -= 4;
-    }
-
-    switch (len)
-    {
-        case 3:
-            h ^= data[2] << 16;
-        case 2:
-            h ^= data[1] << 8;
-        case 1:
-            h ^= data[0];        
-         
-        h *= m;
-    };
-
-    h ^= h >> 13;
-    h *= m;
-    h ^= h >> 15;
-
-    h = h;   // this part is not from original murmur 
-
-    return h;
-}
-
-/*
 *  normal(left shift), no reverse
 *
 * return value should be divided into size of certain table
