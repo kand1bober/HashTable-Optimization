@@ -1,18 +1,38 @@
+
 Performance counter stats for './hashtable -runs 30 -searches 10':
 
-         19 071,82 msec task-clock                       #    1,000 CPUs utilized             
-               142      context-switches                 #    7,446 /sec                      
-                20      cpu-migrations                   #    1,049 /sec                      
-             6 425      page-faults                      #  336,885 /sec                      
-    84 163 266 859      cycles                           #    4,413 GHz                       
-     6 210 612 324      stalled-cycles-frontend          #    7,38% frontend cycles idle      
-   225 864 202 134      instructions                     #    2,68  insn per cycle            
-                                                  #    0,03  stalled cycles per insn   
-    54 088 523 032      branches                         #    2,836 G/sec                     
-       430 234 536      branch-misses                    #    0,80% of all branches           
+          9 340,03 msec task-clock                       #    1,000 CPUs utilized             
+                44      context-switches                 #    4,711 /sec                      
+                13      cpu-migrations                   #    1,392 /sec                      
+             1 738      page-faults                      #  186,081 /sec                      
+    41 290 004 315      cycles                           #    4,421 GHz                       
+     3 280 722 700      stalled-cycles-frontend          #    7,95% frontend cycles idle      
+    54 016 829 046      instructions                     #    1,31  insn per cycle            
+                                                  #    0,06  stalled cycles per insn   
+    11 587 389 057      branches                         #    1,241 G/sec                     
+       307 670 945      branch-misses                    #    2,66% of all branches           
 
-      19,074528916 seconds time elapsed
+       9,341007942 seconds time elapsed
 
-      19,058830000 seconds user
-       0,013677000 seconds sys
+       9,333387000 seconds user
+       0,006999000 seconds sys
 
+
+
++   50,31%    30,51%  hashtable  libc.so.6             [.] __strcmp_avx2                                            ◆
++   31,39%    14,03%  hashtable  hashtable             [.] ListFindNode(List*, char const*)                         ▒
++   20,32%     6,84%  hashtable  libc.so.6             [.] __strlen_avx2                                            ▒
++   18,03%     7,71%  hashtable  hashtable             [.] TableSearch(HashTable_t*, HashTable_t*, char const*, int*▒
++   14,23%     3,88%  hashtable  hashtable             [.] IntrinCRC32(char const*, int)                            ▒
++   10,77%     7,01%  hashtable  libc.so.6             [.] __strncpy_avx2                                           ▒
++   10,06%     0,00%  hashtable  [unknown]             [.] 0x00006129493de2a0                                       ▒
++   10,06%     0,00%  hashtable  hashtable             [.] main                                                     ▒
++    9,19%     5,68%  hashtable  hashtable             [.] CRC32(char const*)                                       ▒
++    8,92%     5,93%  hashtable  libc.so.6             [.] __memmove_avx_unaligned_erms                             ▒
++    5,59%     4,48%  hashtable  hashtable             [.] TableSearchTest(HashTable_t*, HashTable_t*, ProgConfig*) ▒
++    3,25%     2,43%  hashtable  hashtable             [.] strcmp@plt                                               ▒
++    2,63%     2,48%  hashtable  hashtable             [.] strlen@plt                                               ▒
+     1,98%     1,63%  hashtable  libc.so.6             [.] __strncpy_chk                                           
+
+
+следующим оптимизируем strcmp
