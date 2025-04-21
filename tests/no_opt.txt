@@ -1,0 +1,20 @@
+sudo perf record -g -F983 -o perf.data ./hashtable -runs 30 -searches 10sudo perf record -g -F983 -o perf.data ./hashtable -runs 30 -searches 10
+
+Performance counter stats for './hashtable -runs 30 -searches 10':
+
+         10 845,10 msec task-clock                       #    0,999 CPUs utilized             
+               264      context-switches                 #   24,343 /sec                      
+                11      cpu-migrations                   #    1,014 /sec                      
+             1 753      page-faults                      #  161,640 /sec                      
+    47 971 133 976      cycles                           #    4,423 GHz                       
+     2 543 826 623      stalled-cycles-frontend          #    5,30% frontend cycles idle      
+    77 705 495 007      instructions                     #    1,62  insn per cycle            
+                                                  #    0,03  stalled cycles per insn   
+     9 395 676 122      branches                         #  866,352 M/sec                     
+       321 245 096      branch-misses                    #    3,42% of all branches           
+
+      10,851700379 seconds time elapsed
+
+      10,837112000 seconds user
+       0,008012000 seconds sys
+
