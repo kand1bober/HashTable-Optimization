@@ -1,5 +1,4 @@
 #include "../hash_table_headers/table_funcs.h"
-#include <cstddef>
 
 
 HashTableInfo HashTableCtor (HashTable_t* table, size_t table_size)
