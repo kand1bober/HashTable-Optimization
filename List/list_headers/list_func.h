@@ -5,8 +5,10 @@
 
 #include "list_info.h"
 
+
 #ifndef LIST_FUNC_HEADER
 #define LIST_FUNC_HEADER
+
 
     typedef struct List
     {
@@ -35,5 +37,9 @@
     int ListFindNode (List_t* list, const char* string);
 
     List_t* ListConfigure (void* mem_ptr);
+    
+    extern "C" { int MyStrcmp( const char* , const char*) __attribute__((nonnull(1, 2))); }
+    
+    void CopyString(char* dst, const char* src);
 
 #endif

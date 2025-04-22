@@ -105,11 +105,11 @@ HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable
 HashTableInfo TableAdd(const char* word, int word_length, HashTable_t* table)
 {
     uint32_t key = CRC32(word);
-    // uint32_t key = MurmurHash2 (word, word_length - 1);   
-    // uint32_t key = AsciiSumHash(word);
 
     int number = 0;
+    printf("1: %s, %d\n", word, word_length);
     number = ListFindNode (table->array[key].bucket, word);
+    printf("    2\n");
     if (number >= 0) //if same element in bucket exists
     {
         ListGetNode(table->array[key].bucket, number)->word_reps++; //increment counter
@@ -137,11 +137,7 @@ size_t TableSearch (HashTable_t* fast_table, HashTable_t* slow_table, const char
 {
     int local_bucket_index = 0;
 
-    // int word_length = strlen(to_search);
-
     uint32_t key = CRC32(to_search); // 1
-    // uint32_t key = MurmurHash2(to_search, strlen(to_search) ); // 2  
-    // uint32_t key = AsciiSumHash(to_search); // 3
 
     local_bucket_index = ListFindNode(fast_table->array[key].bucket, to_search); //поменять при добавлении второй таблицы
 

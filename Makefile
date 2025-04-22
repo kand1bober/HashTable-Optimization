@@ -1,6 +1,7 @@
 CC = g++
 
-CFLAGS = -O3 
+CFLAGS = -no-pie -z execstack -O3 
+#-no-pie -z execstack
 
 SOURCES_DIR_TABLE = List/list_src
 SOURCES_DIR_LIST = HashTable/hash_table_src
@@ -10,9 +11,9 @@ SOURCES_LIST = $(wildcard $(SOURCES_DIR_LIST)/*cpp )
 
 OBJECTS_TABLE = $(SOURCES_TABLE:.cpp =.o) 
 OBJECTS_LIST = $(SOURCES_LIST:.cpp =.o) 
+OBJECTS_ASM = ASM/MyStrcmp.o 
 
 EXECUTABLE = hashtable
-
 
 #----------------------------
 TEST	:= 1
@@ -29,8 +30,8 @@ endif
 
 all: $(EXECUTABLE)
 
-$(EXECUTABLE): $(OBJECTS_TABLE) $(OBJECTS_LIST)
-	$(CC) $(OBJECTS_TABLE) $(OBJECTS_LIST) $(CFLAGS) -o $(EXECUTABLE)
+$(EXECUTABLE): $(OBJECTS_TABLE) $(OBJECTS_LIST) $(OBJECTS_ASM)
+	$(CC) $(OBJECTS_TABLE) $(OBJECTS_LIST) $(OBJECTS_ASM) $(CFLAGS) -o $(EXECUTABLE)
 
 %.o: %.cpp
 	$(CC) -c $(CFLAGS) $< -o $@
@@ -38,5 +39,3 @@ $(EXECUTABLE): $(OBJECTS_TABLE) $(OBJECTS_LIST)
 clean:
 	@rm -rf $(EXECUTABLE)	
 	@rm -rf perf.data 
-	
-	

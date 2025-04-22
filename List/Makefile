@@ -11,6 +11,8 @@ SOURCES_LIST = $(wildcard $(SOURCES_DIR_LIST)/*cpp )
 
 OBJECTS_LIST = $(SOURCES_LIST:.cpp =.o) 
 
+OBJECTS_ASM = ASM/MyStrcmp.o 
+
 EXECUTABLE = List
 
 

@@ -1,5 +1,4 @@
 ;
-;
 ; Function only works, if stinrgs are prepared and  
 ; insignificant bytes are filled with nulls 
 ;
@@ -15,17 +14,15 @@ section .data
 section .text
     global MyStrcmp
 
-;------------------------------------------------
-
 MyStrcmp:   
 ;------------------------------------------------
     pop rax     ; save return addr 
 
-    push rsi    ; saving arguments from  
-    push rdi    ; registers to stack 
+    push rdx    ; saving arguments   
+    push rsi    ; from registers to 
+    push rdi    ; stack 
 
-;pointer to arguments 
-    mov r9, rsp ; <======  DON'T TOUCH THIS MAN !!!!!!!! 
+    mov r9, rsp ; <======  pointer to the args 
     
     push rax    ; push return addr
 ;------------------------------------------------
@@ -34,13 +31,25 @@ MyStrcmp:
     push rbp   
     mov rbp, rsp
 
-    vmovdqu ymm1, [r9]
-    vmovdqu ymm2, [r9 + 32]
+    mov rbx, [r9]
+    vmovdqu ymm1, [rbx]
 
+    mov rbx, [r9 + 8]  
+    vmovdqu ymm2, [rbx]
+
+;create mask
+    vpxor ymm5, ymm5, ymm5      ; ymm5 = 0
+    vpcmpeqd ymm3, ymm5, ymm5   ; Compare 0 == 0 → all bits = 1 
+
+;compare words
     vcmpps ymm0, ymm1, ymm2, _CMP_EQ_OQ 
 
-    vptest ymm0, ymm0 
-    je _not_equal 
+;make condition in ymm0
+    vpxor ymm0, ymm3    ; inverse ymm0
+    vptest ymm0, ymm0   ; ymm0 AND ymm0
+
+    je _equal 
+    jmp _not_equal 
 
 _equal:
     mov rax, 0
@@ -50,6 +59,7 @@ _not_equal:
     mov rax, 1 
 
 _end:
-    leave       ;
-    ret         ;
+    leave       
+    ret         
 ;------------------------------------------------
+

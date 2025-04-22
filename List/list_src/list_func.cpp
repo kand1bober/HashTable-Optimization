@@ -156,6 +156,9 @@ int ListFindNode (List_t* list, const char* string)
     List_t* next_node = nullptr;
     int iter = 0;
 
+    char str1[32] = {0};
+    char str2[32] = {0};
+
     while (1)
     {   
         next_node = tmp_node->next;
@@ -164,7 +167,9 @@ int ListFindNode (List_t* list, const char* string)
         {
             if (tmp_node != list)
             {
-                if (!strcmp( GET_NODE_DATA(tmp_node), string))
+                CopyString(str1, GET_NODE_DATA(tmp_node));
+                CopyString(str2, string);
+                if (!MyStrcmp(str1, string))
                 {
                     return iter;
                 }
@@ -187,4 +192,16 @@ int ListFindNode (List_t* list, const char* string)
     }
 
     return -1;
+}
+
+
+void CopyString (char* dst, const char* src)
+{
+    int i = 0;
+
+    while (src[i] != '\0')
+    {
+        dst[i] = src[i];
+        i++;    
+    }
 }

@@ -13,9 +13,11 @@ int main (int argc, char* argv[])
 
     TableInput(&fast_table, &slow_table); // input words 
 
+    printf("========= MAAAAAAAAAAAN success! =============\n");
+
     // TableVerificate(&fast_table, &slow_table); // verificate
 
-    // TableDump(&fast_table); // csv dump 
+    TableDump(&fast_table); // csv dump 
     
     NO_TESTS(TableWorkTest(&fast_table, &slow_table);)  //looped search and answer
     
