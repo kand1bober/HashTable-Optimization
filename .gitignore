@@ -10,3 +10,6 @@ HashTable/table_dump/.~lock.table_dump.csv#
 perf.data
 
 help.txt
+
+ASM/ready
+ASM/MyStrcmp.lst
