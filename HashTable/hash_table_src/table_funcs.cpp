@@ -107,9 +107,9 @@ HashTableInfo TableAdd(const char* word, int word_length, HashTable_t* table)
     uint32_t key = CRC32(word);
 
     int number = 0;
-    printf("1: %s, %d\n", word, word_length);
+
     number = ListFindNode (table->array[key].bucket, word);
-    printf("    2\n");
+
     if (number >= 0) //if same element in bucket exists
     {
         ListGetNode(table->array[key].bucket, number)->word_reps++; //increment counter

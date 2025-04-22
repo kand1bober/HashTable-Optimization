@@ -1,6 +1,6 @@
 CC = g++
 
-CFLAGS = -no-pie -z execstack -O3 
+CFLAGS = -z execstack -O3 
 #-no-pie -z execstack
 
 SOURCES_DIR_TABLE = List/list_src

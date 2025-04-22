@@ -16,26 +16,11 @@ section .text
 
 MyStrcmp:   
 ;------------------------------------------------
-    pop rax     ; save return addr 
-
-    push rdx    ; saving arguments   
-    push rsi    ; from registers to 
-    push rdi    ; stack 
-
-    mov r9, rsp ; <======  pointer to the args 
-    
-    push rax    ; push return addr
-;------------------------------------------------
-
-;------------------------------------------------
     push rbp   
     mov rbp, rsp
 
-    mov rbx, [r9]
-    vmovdqu ymm1, [rbx]
-
-    mov rbx, [r9 + 8]  
-    vmovdqu ymm2, [rbx]
+    vmovdqu ymm1, [rdi]
+    vmovdqu ymm2, [rsi] 
 
 ;create mask
     vpxor ymm5, ymm5, ymm5      ; ymm5 = 0
