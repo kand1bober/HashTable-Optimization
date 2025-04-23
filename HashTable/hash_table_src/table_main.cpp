@@ -1,4 +1,4 @@
-#include "../hash_table_headers/table_funcs.h"
+#include "../../List/list_func.h"
 #include "../hash_table_headers/table_utilities.h"
 
 int main (int argc, char* argv[])
@@ -13,10 +13,10 @@ int main (int argc, char* argv[])
 
     TableInput(&fast_table, &slow_table); // input words 
 
-    // TableVerificate(&fast_table, &slow_table); // verificate
+    // TableDump(&fast_table, 50, kDumpFileFastTable); // csv dump 
+    // TableDump(&slow_table, 50, kDumpFileSlowTable); // csv dump 
 
-    // TableDump(&fast_table, 25, kDumpFileFastTable); // csv dump 
-    // TableDump(&slow_table, 25, kDumpFileSlowTable); // csv dump 
+    // TableVerificate(&fast_table, &slow_table); // verificate
     
     NO_TESTS(TableWorkTest(&fast_table, &slow_table);)  //looped search and answer
     

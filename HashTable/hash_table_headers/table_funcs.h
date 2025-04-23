@@ -8,29 +8,22 @@
 #include <nmmintrin.h>
 #include <mmintrin.h>
 
-#include "../../List/list_headers/list_func.h"
+#include "../../List/list_func.h"
 #include "table_config.h"
 
 #ifndef HASH_TABLE_HEADER
 #define HASH_TABLE_HEADER
 
-#define kParsedFile "/home/vyacheslav/HashTable/resources/Lotr_parsed.txt"
-
-#define kDumpFileFastTable "/home/vyacheslav/HashTable/HashTable/table_dump/fast_table_dump.csv"
-#define kDumpFileSlowTable "/home/vyacheslav/HashTable/HashTable/table_dump/slow_table_dump.csv"
+static const char* kParsedFile = "/home/vyacheslav/HashTable/resources/Lotr_parsed.txt";
+static const char* kDumpFileFastTable = "/home/vyacheslav/HashTable/HashTable/table_dump/fast_table_dump.csv";
+static const char* kDumpFileSlowTable = "/home/vyacheslav/HashTable/HashTable/table_dump/slow_table_dump.csv";
 
 #define kFastTableSize 670
 #define kSlowTableSize 234
 
-#define kFastTableMaxLen 8
+#define kFastTableMaxLen 16 // this separation caused by "MyStrcmp" work mechanic
 #define kLongestWord 70
 
-#define CHOOSE_TABLE(res_table, table_1, table_2, word) \
-    if (strlen(word) <= kFastTableMaxLen)               \
-        res_table = table_1;                            \
-    else                                                \
-        res_table = table_2;                            \
-        
 typedef struct 
 {
     FILE* file;
@@ -78,9 +71,7 @@ HashTableInfo LoadTable (TextInfo* text_info, HashTable_t *fast_table, HashTable
 
 HashTableInfo FastTableAdd(const char* word, int word_length, HashTable_t* fast_table);
 
-HashTableInfo SlowTableAdd(const char* word, HashTable_t* slow_table);
-
-HashTableInfo TableAdd(const char* word, HashTable_t* table, uint32_t key);
+HashTableInfo SlowTableAdd(const char* word, int word_length, HashTable_t* slow_table);
 
 size_t TableSearch (HashTable_t* fast_table, HashTable_t* slow_table, const char* to_search, int* bucket_index);
 //-----------------------------------------------
@@ -106,7 +97,7 @@ HashTableInfo TableSearchTest (HashTable_t* fast_table, HashTable_t* slow_table,
 //-----------------------------------------------
 
 //-------------- Hash Functions -----------------
-uint32_t CRC32 (const char* data);
+uint32_t CRC32 (const char* data, int data_length);
 
 uint32_t IntrinCRC32 (const char* word, int word_length);
 //-----------------------------------------------

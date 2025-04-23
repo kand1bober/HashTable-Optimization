@@ -36,3 +36,35 @@ Performance counter stats for './hashtable -runs 30 -searches 10':
 
 
 следующим оптимизируем strcmp
+
+Performance counter stats for './hashtable -runs 30 -searches 10':
+
+          9 073,46 msec task-clock                       #    1,000 CPUs utilized             
+                45      context-switches                 #    4,960 /sec                      
+                23      cpu-migrations                   #    2,535 /sec                      
+             1 738      page-faults                      #  191,548 /sec                      
+    40 110 754 325      cycles                           #    4,421 GHz                       
+     2 563 850 962      stalled-cycles-frontend          #    6,39% frontend cycles idle      
+    43 533 245 856      instructions                     #    1,09  insn per cycle            
+                                                  #    0,06  stalled cycles per insn   
+     9 762 891 356      branches                         #    1,076 G/sec                     
+       326 111 048      branch-misses                    #    3,34% of all branches           
+
+       9,075387412 seconds time elapsed
+
+       9,068337000 seconds user
+       0,006000000 seconds sys
+       
+
++   59,82%    31,49%  hashtable  hashtable             [.] FastListFindNode(List*, char const*, int)
++   20,54%     6,44%  hashtable  libc.so.6             [.] __strlen_avx2
++   19,90%    10,09%  hashtable  hashtable             [.] TableSearch(HashTable_t*, HashTable_t*, char const*, in
++   19,01%    10,69%  hashtable  hashtable             [.] MyStrcmp
++   17,81%     6,26%  hashtable  hashtable             [.] IntrinCRC32(char const*, int)
++   12,80%     9,00%  hashtable  libc.so.6             [.] __memmove_avx_unaligned_erms
++   12,33%     9,17%  hashtable  libc.so.6             [.] __strncpy_avx2
++    9,43%     0,00%  hashtable  [unknown]             [k] 0x000062f208f362a0
++    9,31%     0,00%  hashtable  hashtable             [.] main
++    6,71%     5,02%  hashtable  hashtable             [.] TableSearchTest(HashTable_t*, HashTable_t*, ProgConfig*
++    2,26%     0,01%  hashtable  [kernel.kallsyms]     [k] asm_sysvec_apic_timer_interrupt
+

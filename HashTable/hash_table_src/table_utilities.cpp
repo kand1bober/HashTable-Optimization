@@ -107,12 +107,11 @@ HashTableInfo GetCmdArguments (int argc, char* argv[], ProgConfig* config)
 *
 * return value should be divided into size of certain table
 */
-uint32_t CRC32 (const char* data)   
+uint32_t CRC32 (const char* data, int data_length)   
 {
     uint32_t crc = 0xFFFFFFFF;
     
-    int i = 0;
-    while (data[i] != '\0')
+    for (int i = 0; i < data_length; i++)
     {
         crc ^= data[i];
         
@@ -121,7 +120,6 @@ uint32_t CRC32 (const char* data)
             uint32_t mask = -(crc & 1);  // 0xFFFFFFFF если бит=1, иначе 0
             crc = (crc >> 1) ^ (0xEDB88320 & mask);
         }
-        i++;
     }
     
     crc = ~crc;
@@ -137,10 +135,11 @@ uint32_t CRC32 (const char* data)
 */
 uint32_t IntrinCRC32 (const char* word, int word_length)
 { 
-    uint64_t crc_init = 0;
-    memcpy(&crc_init, word, word_length);  
-
-    uint32_t key = _mm_crc32_u64(-1, crc_init);
+    uint64_t crc_init[2] = {0};
+    memcpy(crc_init, word, word_length);  
+    
+    uint32_t key = _mm_crc32_u64(-1, crc_init[0]);
+    key += _mm_crc32_u64(-1, crc_init[1]);
 
     return key;
 }

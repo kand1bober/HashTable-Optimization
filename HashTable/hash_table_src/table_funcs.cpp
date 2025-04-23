@@ -75,8 +75,8 @@ HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable
     int word_length = 0;
     for (size_t i = 0; i < text_info->words_count; i++)
     {
-        word_length = strlen(text_info->array + offset); // measure word length + '\0'
-        strncpy(word, text_info->array + offset, word_length + 1); // take the word 
+        word_length = strlen(text_info->array + offset); // measure word length without '\0'
+        strncpy(word, text_info->array + offset, word_length + 1); // take the word with '\0'
         offset += (word_length + 1); // offset = skip word + '\0'
         
         if (word_length <= kFastTableMaxLen)
@@ -85,7 +85,7 @@ HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable
         }
         else 
         {
-            SlowTableAdd (word, slow_table);
+            SlowTableAdd (word, word_length, slow_table);
         }
     }
 
@@ -96,7 +96,7 @@ HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable
 /*
 * 1st arg -- string to add in hash table
 *
-* 2nd arg -- ptr to certain version of hash table
+* 2nd arg -- string length without '\0'
 *
 * 3rd arg -- ptr to fast table (word length <= max len)
 *
@@ -105,51 +105,46 @@ HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable
 HashTableInfo FastTableAdd(const char* word, int word_length, HashTable_t* fast_table) 
 {
     uint32_t key = IntrinCRC32(word, word_length) % kFastTableSize;
+ 
+    int number = FastListFindNode(fast_table->array[key].bucket, word, word_length);
 
-    TableAdd(word, fast_table, key);
-
-    return kGoodTable; 
-}
-
-
-/*
-* 1st arg -- string to add in hash table
-*
-* 2nd arg -- ptr to certain version of hash table
-*
-* result -- new string added or existing string counter incremented  
-*/
-HashTableInfo SlowTableAdd(const char* word, HashTable_t* slow_table)
-{
-    uint32_t key = CRC32(word) % kSlowTableSize; 
-
-    TableAdd(word, slow_table, key);
-       
-    return kGoodTable; 
-}
-
-
-/*
-* 1st arg -- string to add in hash table
-*
-* 2nd arg -- ptr to certain version of hash table
-*
-* 3rd arg -- key of needed bucket
-*
-* result -- new string added or existing string counter incremented  
-*/
-HashTableInfo TableAdd(const char* word, HashTable_t* table, uint32_t key) 
-{
-    int number = 0;
-    number = ListFindNode (table->array[key].bucket, word); 
     if (number >= 0) //if same element in bucket exists
     {
-        ListGetNode(table->array[key].bucket, number)->word_reps++; //increment counter
+        ListGetNode(fast_table->array[key].bucket, number)->word_reps++; //increment counter
     } 
     else  
     {
-        ListAdd (table->array[key].bucket, word, table->array[key].bucket_size); //push new node to the end of bucket 
-        table->array[key].bucket_size++;
+        ListAdd (fast_table->array[key].bucket, word, fast_table->array[key].bucket_size); //push new node to the end of bucket 
+        fast_table->array[key].bucket_size++;
+    }
+
+    return kGoodTable; 
+}
+
+
+/*
+* 1st arg -- string to add in hash table
+*
+* 2nd arg -- string length without '\0'
+*
+* 3rd arg -- ptr to slow table (word length <= max len)
+*
+* result -- new string added or existing string counter incremented  
+*/
+HashTableInfo SlowTableAdd(const char* word, int word_length, HashTable_t* slow_table)
+{
+    uint32_t key = CRC32(word, word_length) % kSlowTableSize; 
+
+    int number = SlowListFindNode (slow_table->array[key].bucket, word, word_length);
+
+    if (number >= 0) //if same element in bucket exists
+    {
+        ListGetNode(slow_table->array[key].bucket, number)->word_reps++; //increment counter
+    } 
+    else  
+    {
+        ListAdd (slow_table->array[key].bucket, word, slow_table->array[key].bucket_size); //push new node to the end of bucket 
+        slow_table->array[key].bucket_size++;
     }
        
     return kGoodTable; 
@@ -175,13 +170,13 @@ size_t TableSearch (HashTable_t* fast_table, HashTable_t* slow_table, const char
     {  
         key = IntrinCRC32(to_search, word_length) % kFastTableSize;
 
-        local_bucket_index = ListFindNode(fast_table->array[key].bucket, to_search); 
+        local_bucket_index = FastListFindNode(fast_table->array[key].bucket, to_search, word_length); 
     }
     else 
     {
-        key = CRC32(to_search) % kSlowTableSize;
+        key = CRC32(to_search, word_length) % kSlowTableSize;
 
-        local_bucket_index = ListFindNode(slow_table->array[key].bucket, to_search);
+        local_bucket_index = SlowListFindNode(slow_table->array[key].bucket, to_search, word_length);
     }
 
     *bucket_index = local_bucket_index;

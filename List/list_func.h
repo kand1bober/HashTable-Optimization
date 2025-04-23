@@ -2,11 +2,22 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <sys/types.h>
 
-#include "list_info.h"
+#include <immintrin.h>
+#include <nmmintrin.h>
+#include <smmintrin.h>
 
 #ifndef LIST_FUNC_HEADER
 #define LIST_FUNC_HEADER
+
+    const char LIST_POISON[] = "BADBABA";
+
+    typedef enum ListInfo
+    {
+        kGoodList = 52,
+        kBadList = 53,
+    }ListInfo_t;
 
     typedef struct List
     {
@@ -30,10 +41,10 @@
 
     ListInfo_t ListDelete (List_t* list, int number);
 
-    ListInfo_t TextListDump (List_t* list);
+    int FastListFindNode (List_t* list, const char* string, int str_len);
 
-    int ListFindNode (List_t* list, const char* string);
+    int SlowListFindNode (List_t* list, const char* string, int str_len);
 
-    List_t* ListConfigure (void* mem_ptr);
+    extern "C" { int MyStrcmp( const char* , int, const char* , int) __attribute__((nonnull(1, 3))); }
 
 #endif
