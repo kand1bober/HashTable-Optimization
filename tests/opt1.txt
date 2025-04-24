@@ -68,3 +68,7 @@ Performance counter stats for './hashtable -runs 30 -searches 10':
 +    6,71%     5,02%  hashtable  hashtable             [.] TableSearchTest(HashTable_t*, HashTable_t*, ProgConfig*
 +    2,26%     0,01%  hashtable  [kernel.kallsyms]     [k] asm_sysvec_apic_timer_interrupt
 
+
+
+========================== ЭТА СТАДИЯ ЗАВЕРШЕНА =========================
+
