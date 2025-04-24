@@ -1,38 +1,5 @@
 #include "../hash_table_headers/table_funcs.h"
 
-/*
-* Simple test of HashTable work concept
-*
-* To check results, see "table_dump.csv" table
-*/
-HashTableInfo TableWorkTest (HashTable_t* fast_table, HashTable_t* slow_table)
-{
-    size_t arr_index = 0;
-    int bucket_index = 0;
-    char word[kLongestWord] = {0};
-    while(1)
-    {
-        scanf("%s", word);
-        getchar();  // skip '\n'
-        arr_index = TableSearch(fast_table, slow_table, word, &bucket_index );
-        if (arr_index > 0)
-        {
-            printf("\n---------------\n"
-                   "Word found\n"
-                   "bucket: %lu\n"
-                   "position in bucket: %d\n"
-                   "---------------\n", arr_index, bucket_index);
-        }
-        else  
-        {
-            printf("WorkTest: No such element in HashTable\n");
-        }
-    }
-
-    return kGoodTable;
-}
-
-
 HashTableInfo TableDump (HashTable_t* table, int max_load_factor, const char* dump_file_name)
 {   
     TextInfo src_info = {};
@@ -119,7 +86,7 @@ HashTableInfo TableVerificate (HashTable_t* fast_table, HashTable_t* slow_table)
     {
         word_length = strlen(text_ptr);
         strncpy(word, text_ptr, word_length + 1);
-        arr_index = TableSearch(fast_table, slow_table, word, &bucket_index);
+        arr_index = TableSearch(fast_table, slow_table, word, word_length, &bucket_index);
 
         if (arr_index > 10000000) //impossible value for table 
         {
@@ -178,7 +145,7 @@ HashTableInfo TableSearchTest (HashTable_t* fast_table, HashTable_t* slow_table,
             {
                 word_length = strlen(text_ptr);
                 strncpy(word, text_ptr, word_length + 1);
-                TableSearch(fast_table, slow_table, word, &bucket_index);
+                TableSearch(fast_table, slow_table, word, word_length, &bucket_index);
 
                 text_ptr += word_length + 1;
             }

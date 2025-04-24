@@ -138,25 +138,25 @@ int FastListFindNode (List_t* list, int list_size, const char* string, int str_l
     return -1;
 }
 
-результат (Я в ахуе :) ): 
+результат (Я не в ахуе :O ): 
 
- Performance counter stats for './hashtable -runs 30 -searches 10':
+Performance counter stats for './hashtable -runs 30 -searches 10':
 
-          4 227,11 msec task-clock                       #    1,000 CPUs utilized           
-                18      context-switches                 #    4,258 /sec                    
-                 2      cpu-migrations                   #    0,473 /sec                    
-             8 344      page-faults                      #    1,974 K/sec                   
-    18 756 116 459      cycles                           #    4,437 GHz                     
-     1 155 908 985      stalled-cycles-frontend          #    6,16% frontend cycles idle    
-    33 953 643 736      instructions                     #    1,81  insn per cycle          
-                                                  #    0,03  stalled cycles per insn   
-     7 494 174 748      branches                         #    1,773 G/sec                   
-       106 260 004      branch-misses                    #    1,42% of all branches         
+          7 162,84 msec task-clock                       #    1,000 CPUs utilized             
+                42      context-switches                 #    5,864 /sec                      
+                 6      cpu-migrations                   #    0,838 /sec                      
+             1 737      page-faults                      #  242,502 /sec                      
+    31 764 358 062      cycles                           #    4,435 GHz                       
+     2 341 911 250      stalled-cycles-frontend          #    7,37% frontend cycles idle      
+    37 609 003 948      instructions                     #    1,18  insn per cycle            
+                                                  #    0,06  stalled cycles per insn   
+     8 204 275 907      branches                         #    1,145 G/sec                     
+       294 713 176      branch-misses                    #    3,59% of all branches           
 
-       4,227773063 seconds time elapsed
+       7,164047969 seconds time elapsed
 
-       4,213524000 seconds user
-       0,014001000 seconds sys
+       7,156502000 seconds user
+       0,006999000 seconds sys
 
 
 ======================= ЭТА СТАДИЯ ТОЖЕ ЗАВЕРШЕНА ============================

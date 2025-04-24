@@ -72,7 +72,7 @@ HashTableInfo FastTableAdd(const char* word, int word_length, HashTable_t* fast_
 
 HashTableInfo SlowTableAdd(const char* word, int word_length, HashTable_t* slow_table);
 
-size_t TableSearch (HashTable_t* fast_table, HashTable_t* slow_table, const char* to_search, int* bucket_index);
+size_t TableSearch (HashTable_t* fast_table, HashTable_t* slow_table, const char* to_search, int word_length, int* bucket_index);
 //-----------------------------------------------
 
 //----------------- Utilities -------------------
@@ -88,7 +88,6 @@ HashTableInfo GetCmdArguments (int argc, char* argv[], ProgConfig* config);
 //-----------------------------------------------
 
 //-------------------- DLC ----------------------
-HashTableInfo TableWorkTest (HashTable_t* fast_table, HashTable_t* slow_table);
 
 HashTableInfo TableVerificate (HashTable_t* fast_table, HashTable_t* slow_table);
 
