@@ -157,3 +157,6 @@ int FastListFindNode (List_t* list, int list_size, const char* string, int str_l
 
        4,213524000 seconds user
        0,014001000 seconds sys
+
+
+======================= ЭТА СТАДИЯ ТОЖЕ ЗАВЕРШЕНА ============================
