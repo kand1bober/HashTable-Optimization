@@ -106,7 +106,7 @@ HashTableInfo FastTableAdd(const char* word, int word_length, HashTable_t* fast_
 {
     uint32_t key = IntrinCRC32(word, word_length) % kFastTableSize;
  
-    int number = FastListFindNode(fast_table->array[key].bucket, word, word_length);
+    int number = FastListFindNode(fast_table->array[key].bucket, fast_table->array[key].bucket_size, word, word_length);
 
     if (number >= 0) //if same element in bucket exists
     {
@@ -135,7 +135,7 @@ HashTableInfo SlowTableAdd(const char* word, int word_length, HashTable_t* slow_
 {
     uint32_t key = CRC32(word, word_length) % kSlowTableSize; 
 
-    int number = SlowListFindNode (slow_table->array[key].bucket, word, word_length);
+    int number = SlowListFindNode (slow_table->array[key].bucket, slow_table->array[key].bucket_size, word, word_length);
 
     if (number >= 0) //if same element in bucket exists
     {
@@ -170,13 +170,13 @@ size_t TableSearch (HashTable_t* fast_table, HashTable_t* slow_table, const char
     {  
         key = IntrinCRC32(to_search, word_length) % kFastTableSize;
 
-        local_bucket_index = FastListFindNode(fast_table->array[key].bucket, to_search, word_length); 
+        local_bucket_index = FastListFindNode(fast_table->array[key].bucket, fast_table->array[key].bucket_size, to_search, word_length); 
     }
     else 
     {
         key = CRC32(to_search, word_length) % kSlowTableSize;
 
-        local_bucket_index = SlowListFindNode(slow_table->array[key].bucket, to_search, word_length);
+        local_bucket_index = SlowListFindNode(slow_table->array[key].bucket, slow_table->array[key].bucket_size, to_search, word_length);
     }
 
     *bucket_index = local_bucket_index;

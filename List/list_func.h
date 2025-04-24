@@ -41,9 +41,9 @@
 
     ListInfo_t ListDelete (List_t* list, int number);
 
-    int FastListFindNode (List_t* list, const char* string, int str_len);
+    int FastListFindNode (List_t* list, int list_size, const char* string, int str_len);
 
-    int SlowListFindNode (List_t* list, const char* string, int str_len);
+    int SlowListFindNode (List_t* list, int list_size, const char* string, int str_len);
 
     extern "C" { int MyStrcmp( const char* , int, const char* , int) __attribute__((nonnull(1, 3))); }
 

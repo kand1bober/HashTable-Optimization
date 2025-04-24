@@ -107,7 +107,7 @@ ListInfo_t ListDelete (List_t* list, int number)
 *
 * return -- number of elem node, if found; (< 0), if not found
 */
-int FastListFindNode (List_t* list, const char* string, int str_len)
+int FastListFindNode (List_t* list, int list_size, const char* string, int str_len)
 {
     List_t* tmp_node = list->next;
     List_t* next_node = nullptr;
@@ -155,7 +155,7 @@ int FastListFindNode (List_t* list, const char* string, int str_len)
 *
 * return -- number of elem node, if found; (< 0), if not found
 */
-int SlowListFindNode (List_t* list, const char* string, int str_len)
+int SlowListFindNode (List_t* list, int list_size, const char* string, int str_len)
 {
     List_t* tmp_node = list->next;
     List_t* next_node = nullptr;
