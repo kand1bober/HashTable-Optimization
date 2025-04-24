@@ -117,7 +117,7 @@ HashTableInfo FastTableAdd(const char* word, int word_length, HashTable_t* fast_
     else  
     {
         ListAdd (table_position.bucket, word, table_position.bucket_size); //push new node to the end of bucket 
-        table_position.bucket_size++;
+        fast_table->array[key].bucket_size++;
     }
 
     return kGoodTable; 
@@ -148,7 +148,7 @@ HashTableInfo SlowTableAdd(const char* word, int word_length, HashTable_t* slow_
     else  
     {
         ListAdd (table_position.bucket, word, table_position.bucket_size); //push new node to the end of bucket 
-        table_position.bucket_size++;
+        slow_table->array[key].bucket_size++;
     }
        
     return kGoodTable; 

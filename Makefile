@@ -16,7 +16,7 @@ OBJECTS_ASM = ASM1/MyStrcmp.o
 EXECUTABLE = hashtable
 
 #----------------------------
-DEBUG 	:= 1
+DEBUG 	:= 0
 
 ifeq ($(DEBUG), 1)
 CFLAGS += -fsanitize=address,undefined -D _DEBUG -Wall -Wextra
