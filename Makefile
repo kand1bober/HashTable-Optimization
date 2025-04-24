@@ -1,4 +1,4 @@
-CC = g++
+CC = gcc
 
 CFLAGS = -z execstack -O3 -msse4.2 -msse3 -msse2 -msse -mavx2 -mavx 
 #-no-pie -z execstack
@@ -16,12 +16,7 @@ OBJECTS_ASM = ASM1/MyStrcmp.o
 EXECUTABLE = hashtable
 
 #----------------------------
-TEST	:= 1
-DEBUG 	:= 0
-
-ifeq ($(TEST), 1)
-CFLAGS += -DTESTS 
-endif
+DEBUG 	:= 1
 
 ifeq ($(DEBUG), 1)
 CFLAGS += -fsanitize=address,undefined -D _DEBUG -Wall -Wextra

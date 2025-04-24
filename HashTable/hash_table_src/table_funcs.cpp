@@ -164,10 +164,10 @@ HashTableInfo SlowTableAdd(const char* word, int word_length, HashTable_t* slow_
 *
 * return = number of bucket, if found; if not, then return < 0
 */
-size_t TableSearch (HashTable_t* fast_table, HashTable_t* slow_table, const char* to_search, int* bucket_index)
+size_t TableSearch (HashTable_t* fast_table, HashTable_t* slow_table, 
+                    const char* to_search, int word_length, int* bucket_index)
 {
     int local_bucket_index = 0;
-    int word_length = strlen(to_search);
     uint32_t key = 0;
 
     if (word_length <= kFastTableMaxLen)

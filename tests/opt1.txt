@@ -138,7 +138,7 @@ int FastListFindNode (List_t* list, int list_size, const char* string, int str_l
     return -1;
 }
 
-результат (Я в ахуе :) ): 
+результат (Я в ахуе :O ): 
 
  Performance counter stats for './hashtable -runs 30 -searches 10':
 
@@ -157,3 +157,36 @@ int FastListFindNode (List_t* list, int list_size, const char* string, int str_l
 
        4,213524000 seconds user
        0,014001000 seconds sys
+
+
+Оптимизирую Strlen:
+
+annotate этой функции:
+------------------------------------------------------
+Percent│                                                                                                                                                          ▒
+       │                                                                                                                                                          ▒
+       │                                                                                                                                                          ▒
+       │     Disassembly of section .text:                                                                                                                        ▒
+       │                                                                                                                                                          ▒
+       │     000000000018b740 <__strlen_avx2>:                                                                                                                    ▒
+ 11,19 │       endbr64                                                                                                                                            ▒
+ 11,38 │       mov        %edi,%eax                                                                                                                               ▒
+ 11,28 │       mov        %rdi,%rdx                                                                                                                               ▒
+ 11,50 │       vpxor      %xmm0,%xmm0,%xmm0                                                                                                                       ▒
+  7,11 │       and        $0xfff,%eax                                                                                                                             ▒
+  7,16 │       cmp        $0xfe0,%eax                                                                                                                             ▒
+       │     ↓ ja         150                                                                                                                                     ◆
+  5,48 │       vpcmpeqb   (%rdi),%ymm0,%ymm1                                                                                                                      ▒
+  6,63 │       vpmovmskb  %ymm1,%eax                                                                                                                              ▒
+  5,56 │       test       %eax,%eax                                                                                                                               ▒
+       │     ↓ je         80                                                                                                                                      ▒
+  6,51 │       tzcnt      %eax,%eax                                                                                                                               ▒
+  3,48 │       vzeroupper                                                                                                                                         ▒
+ 12,35 │     ← ret                                                                                                                                                ▒
+       │       data16     cs nopw 0x0(%rax,%rax,1)   
+------------------------------------------------------
+
+тесты после пределки на inline макрос: 
+
+
+

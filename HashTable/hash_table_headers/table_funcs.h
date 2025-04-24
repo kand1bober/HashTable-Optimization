@@ -9,7 +9,7 @@
 #include <mmintrin.h>
 
 #include "../../List/list_func.h"
-#include "table_config.h"
+#include "../../ASM2/strlen.h"
 
 #ifndef HASH_TABLE_HEADER
 #define HASH_TABLE_HEADER
@@ -72,7 +72,7 @@ HashTableInfo FastTableAdd(const char* word, int word_length, HashTable_t* fast_
 
 HashTableInfo SlowTableAdd(const char* word, int word_length, HashTable_t* slow_table);
 
-size_t TableSearch (HashTable_t* fast_table, HashTable_t* slow_table, const char* to_search, int* bucket_index);
+size_t TableSearch (HashTable_t* fast_table, HashTable_t* slow_table, const char* to_search, int word_length, int* bucket_index);
 //-----------------------------------------------
 
 //----------------- Utilities -------------------
@@ -106,5 +106,9 @@ int CheckTableDispersia (HashTable_t* fast_table, HashTable_t* slow_table);
 
 void CollectTableData(HashTable_t* table, size_t table_size, const char* dump_file_name);
 //-----------------------------------------------
+
+// //-----------------------------------------------
+// inline int MyStrlen(const char* str);
+// //-----------------------------------------------
 
 #endif

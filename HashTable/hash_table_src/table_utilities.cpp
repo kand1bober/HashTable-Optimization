@@ -1,4 +1,4 @@
-#include "../hash_table_headers/table_utilities.h"
+#include "../hash_table_headers/table_funcs.h"
 
 HashTableInfo GetFileInfo (TextInfo* text_info, const char* filename, const char* open_mode)
 {
