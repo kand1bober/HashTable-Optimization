@@ -139,7 +139,7 @@ HashTableInfo SlowTableAdd(const char* word, int word_length, HashTable_t* slow_
 
     HashTableElem table_position = slow_table->array[key];
 
-    int number = SlowListFindNode (slow_table->array[key].bucket, table_position.bucket_size, word, word_length);
+    int number = SlowListFindNode (table_position.bucket, table_position.bucket_size, word, word_length);
 
     if (number >= 0) //if same element in bucket exists
     {
@@ -182,7 +182,9 @@ size_t TableSearch (HashTable_t* fast_table, HashTable_t* slow_table,
     {
         key = CRC32(to_search, word_length) % kSlowTableSize;
 
-        local_bucket_index = SlowListFindNode(slow_table->array[key].bucket, slow_table->array[key].bucket_size, to_search, word_length);
+        HashTableElem table_position = slow_table->array[key];
+
+        local_bucket_index = SlowListFindNode(table_position.bucket, table_position.bucket_size, to_search, word_length);
     }
 
     *bucket_index = local_bucket_index;
