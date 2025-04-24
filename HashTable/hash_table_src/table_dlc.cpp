@@ -141,7 +141,12 @@ HashTableInfo TableSearchTest (HashTable_t* fast_table, HashTable_t* slow_table,
 
             for (size_t i = 0; i < text_info.words_count; i++)
             {   
-                word_length = strlen(text_ptr);
+                word_length = MyStrlen(text_ptr);
+
+                if (word_length == 32)
+                {
+                    word_length = strlen(text_ptr);
+                }
                 
                 strncpy(word, text_ptr, word_length + 1);
                 TableSearch(fast_table, slow_table, word, word_length, &bucket_index);

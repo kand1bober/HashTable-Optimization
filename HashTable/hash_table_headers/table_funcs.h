@@ -24,6 +24,9 @@ static const char* kDumpFileSlowTable = "/home/vyacheslav/HashTable/HashTable/ta
 #define kFastTableMaxLen 16 // this separation caused by "MyStrcmp" work mechanic
 #define kLongestWord 70
 
+#define LIKELY(x) __builtin_expect((x),1)
+#define UNLIKELY(x) __builtin_expect((x),0)
+
 typedef struct 
 {
     FILE* file;
@@ -107,8 +110,8 @@ int CheckTableDispersia (HashTable_t* fast_table, HashTable_t* slow_table);
 void CollectTableData(HashTable_t* table, size_t table_size, const char* dump_file_name);
 //-----------------------------------------------
 
-// //-----------------------------------------------
-// inline int MyStrlen(const char* str);
-// //-----------------------------------------------
+//-----------------------------------------------
+inline int MyStrlen(const char* str);
+//-----------------------------------------------
 
 #endif

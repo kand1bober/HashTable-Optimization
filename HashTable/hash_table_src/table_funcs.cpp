@@ -75,7 +75,12 @@ HashTableInfo LoadTable (TextInfo* text_info, HashTable_t* fast_table, HashTable
     int word_length = 0;
     for (size_t i = 0; i < text_info->words_count; i++)
     {
-        word_length = strlen(text_info->array + offset); // measure word length without '\0'
+        word_length = MyStrlen(text_info->array + offset); // measure word length without '\0'
+        if (word_length == 32)
+        {
+            word_length = word_length = strlen(text_info->array + offset);
+        }
+
         strncpy(word, text_info->array + offset, word_length + 1); // take the word with '\0'
         offset += (word_length + 1); // offset = skip word + '\0'
         
