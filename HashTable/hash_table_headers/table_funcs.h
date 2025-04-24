@@ -18,8 +18,8 @@ static const char* kParsedFile = "/home/vyacheslav/HashTable/resources/Lotr_pars
 static const char* kDumpFileFastTable = "/home/vyacheslav/HashTable/HashTable/table_dump/fast_table_dump.csv";
 static const char* kDumpFileSlowTable = "/home/vyacheslav/HashTable/HashTable/table_dump/slow_table_dump.csv";
 
-#define kFastTableSize 670
-#define kSlowTableSize 234
+#define kFastTableSize 900
+#define kSlowTableSize 1
 
 #define kFastTableMaxLen 16 // this separation caused by "MyStrcmp" work mechanic
 #define kLongestWord 70
@@ -45,7 +45,6 @@ typedef enum
 
     kGoodSearchTest,
     kBadSearchTest
-
 } HashTableInfo;
 
 typedef struct

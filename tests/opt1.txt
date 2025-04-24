@@ -35,36 +35,125 @@ Performance counter stats for './hashtable -runs 30 -searches 10':
      1,98%     1,63%  hashtable  libc.so.6             [.] __strncpy_chk                                           
 
 
-следующим оптимизируем strcmp
+следующим оптимизируем strcmp:
 
-Performance counter stats for './hashtable -runs 30 -searches 10':
+ Performance counter stats for './hashtable -runs 30 -searches 10':
 
-          9 073,46 msec task-clock                       #    1,000 CPUs utilized             
-                45      context-switches                 #    4,960 /sec                      
-                23      cpu-migrations                   #    2,535 /sec                      
-             1 738      page-faults                      #  191,548 /sec                      
-    40 110 754 325      cycles                           #    4,421 GHz                       
-     2 563 850 962      stalled-cycles-frontend          #    6,39% frontend cycles idle      
-    43 533 245 856      instructions                     #    1,09  insn per cycle            
-                                                  #    0,06  stalled cycles per insn   
-     9 762 891 356      branches                         #    1,076 G/sec                     
-       326 111 048      branch-misses                    #    3,34% of all branches           
+          8 315,97 msec task-clock                       #    1,000 CPUs utilized             
+                24      context-switches                 #    2,886 /sec                      
+                 3      cpu-migrations                   #    0,361 /sec                      
+             1 737      page-faults                      #  208,875 /sec                      
+    36 915 000 392      cycles                           #    4,439 GHz                       
+     2 219 366 902      stalled-cycles-frontend          #    6,01% frontend cycles idle      
+    41 327 677 505      instructions                     #    1,12  insn per cycle            
+                                                  #    0,05  stalled cycles per insn   
+     9 383 299 902      branches                         #    1,128 G/sec                     
+       294 478 260      branch-misses                    #    3,14% of all branches           
 
-       9,075387412 seconds time elapsed
+       8,316619937 seconds time elapsed
 
-       9,068337000 seconds user
-       0,006000000 seconds sys
+       8,312340000 seconds user
+       0,004000000 seconds sys
        
 
-+   59,82%    31,49%  hashtable  hashtable             [.] FastListFindNode(List*, char const*, int)
-+   20,54%     6,44%  hashtable  libc.so.6             [.] __strlen_avx2
-+   19,90%    10,09%  hashtable  hashtable             [.] TableSearch(HashTable_t*, HashTable_t*, char const*, in
-+   19,01%    10,69%  hashtable  hashtable             [.] MyStrcmp
-+   17,81%     6,26%  hashtable  hashtable             [.] IntrinCRC32(char const*, int)
-+   12,80%     9,00%  hashtable  libc.so.6             [.] __memmove_avx_unaligned_erms
-+   12,33%     9,17%  hashtable  libc.so.6             [.] __strncpy_avx2
-+    9,43%     0,00%  hashtable  [unknown]             [k] 0x000062f208f362a0
-+    9,31%     0,00%  hashtable  hashtable             [.] main
-+    6,71%     5,02%  hashtable  hashtable             [.] TableSearchTest(HashTable_t*, HashTable_t*, ProgConfig*
-+    2,26%     0,01%  hashtable  [kernel.kallsyms]     [k] asm_sysvec_apic_timer_interrupt
++   55,17%    27,92%  hashtable  hashtable             [.] FastListFindNode(List*, char const*, int)                  
++   21,70%     6,31%  hashtable  libc.so.6             [.] __strlen_avx2                                                     
++   20,94%    10,42%  hashtable  hashtable             [.] TableSearch(HashTable_t*, HashTable_t*, char const*, int*)         
++   19,45%     6,47%  hashtable  hashtable             [.] IntrinCRC32(char const*, int)                                             
++   19,27%    11,84%  hashtable  hashtable             [.] MyStrcmp                                                                   
++   14,10%     9,90%  hashtable  libc.so.6             [.] __memmove_avx_unaligned_erms                                            
++   12,25%     9,19%  hashtable  libc.so.6             [.] __strncpy_avx2                                                              
++    9,45%     0,00%  hashtable  [unknown]             [k] 0x00005e890260e2a0                                                            
++    9,32%     0,00%  hashtable  hashtable             [.] main                                                                                
++    6,80%     5,19%  hashtable  hashtable             [.] TableSearchTest(HashTable_t*, HashTable_t*, ProgConfig*)                               
+     2,25%     1,84%  hashtable  hashtable             [.] __memcpy_chk@plt                                                           
 
+
+изменяю цикл поиска, сейчас такой: 
+
+int FastListFindNode (List_t* list, const char* string, int str_len)
+{
+    List_t* tmp_node = list->next;
+    List_t* next_node = nullptr;
+    int iter = 0;
+
+    while (1)
+    {   
+        next_node = tmp_node->next;
+
+        if (next_node)
+        {
+            if (tmp_node != list)
+            {
+                if ( (str_len == tmp_node->str_len) && 
+                     (!MyStrcmp(GET_NODE_DATA(tmp_node), tmp_node->str_len, string, str_len)) )
+                {
+                    return iter;
+                }
+                else  
+                {
+                    tmp_node = next_node;
+                    iter++;
+                }
+            }
+            else  
+            {
+                return -1;
+            }
+        }
+        else  
+        {
+            printf("Bad list allocation");
+            exit(1);
+        }
+    }
+
+    return -1;
+}
+
+стал такой: 
+
+int FastListFindNode (List_t* list, int list_size, const char* string, int str_len)
+{
+    List_t* tmp_node = list->next;
+    List_t* next_node = nullptr;
+    int iter = 0;
+
+    for (int i = 0; i < list_size; i++)
+    {   
+        next_node = tmp_node->next;
+
+        if ( (str_len == tmp_node->str_len) && 
+             (!MyStrcmp(GET_NODE_DATA(tmp_node), tmp_node->str_len, string, str_len)) )
+        {
+            return iter;
+        }
+        else  
+        {
+            tmp_node = next_node;
+            iter++;
+        }
+    }
+
+    return -1;
+}
+
+результат (Я в ахуе :) ): 
+
+ Performance counter stats for './hashtable -runs 30 -searches 10':
+
+          4 227,11 msec task-clock                       #    1,000 CPUs utilized           
+                18      context-switches                 #    4,258 /sec                    
+                 2      cpu-migrations                   #    0,473 /sec                    
+             8 344      page-faults                      #    1,974 K/sec                   
+    18 756 116 459      cycles                           #    4,437 GHz                     
+     1 155 908 985      stalled-cycles-frontend          #    6,16% frontend cycles idle    
+    33 953 643 736      instructions                     #    1,81  insn per cycle          
+                                                  #    0,03  stalled cycles per insn   
+     7 494 174 748      branches                         #    1,773 G/sec                   
+       106 260 004      branch-misses                    #    1,42% of all branches         
+
+       4,227773063 seconds time elapsed
+
+       4,213524000 seconds user
+       0,014001000 seconds sys

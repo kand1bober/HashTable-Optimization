@@ -143,3 +143,4 @@ uint32_t IntrinCRC32 (const char* word, int word_length)
 
     return key;
 }
+

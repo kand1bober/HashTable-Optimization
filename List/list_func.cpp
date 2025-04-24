@@ -107,40 +107,25 @@ ListInfo_t ListDelete (List_t* list, int number)
 *
 * return -- number of elem node, if found; (< 0), if not found
 */
-int FastListFindNode (List_t* list, const char* string, int str_len)
+int FastListFindNode (List_t* list, int list_size, const char* string, int str_len)
 {
     List_t* tmp_node = list->next;
     List_t* next_node = nullptr;
     int iter = 0;
 
-    while (1)
+    for (int i = 0; i < list_size; i++)
     {   
         next_node = tmp_node->next;
 
-        if (next_node)
+        if ( (str_len == tmp_node->str_len) && 
+             (!MyStrcmp(GET_NODE_DATA(tmp_node), tmp_node->str_len, string, str_len)) )
         {
-            if (tmp_node != list)
-            {
-                if ( (str_len == tmp_node->str_len) && 
-                     (!MyStrcmp(GET_NODE_DATA(tmp_node), tmp_node->str_len, string, str_len)) )
-                {
-                    return iter;
-                }
-                else  
-                {
-                    tmp_node = next_node;
-                    iter++;
-                }
-            }
-            else  
-            {
-                return -1;
-            }
+            return iter;
         }
         else  
         {
-            printf("Bad list allocation");
-            exit(1);
+            tmp_node = next_node;
+            iter++;
         }
     }
 
@@ -155,39 +140,25 @@ int FastListFindNode (List_t* list, const char* string, int str_len)
 *
 * return -- number of elem node, if found; (< 0), if not found
 */
-int SlowListFindNode (List_t* list, const char* string, int str_len)
+int SlowListFindNode (List_t* list, int list_size, const char* string, int str_len)
 {
     List_t* tmp_node = list->next;
     List_t* next_node = nullptr;
     int iter = 0;
 
-    while (1)
-    {   
+    for (int i = 0; i < list_size; i++)
+    {    
         next_node = tmp_node->next;
 
-        if (next_node)
+        if ( (str_len == tmp_node->str_len) && 
+             (!strncmp( GET_NODE_DATA(tmp_node), string, str_len)) )
         {
-            if (tmp_node != list)
-            {
-                if ( (str_len == tmp_node->str_len) && (!strncmp( GET_NODE_DATA(tmp_node), string, str_len)) )
-                {
-                    return iter;
-                }
-                else  
-                {
-                    tmp_node = next_node;
-                    iter++;
-                }
-            }
-            else  
-            {
-                return -1;
-            }
+            return iter;
         }
         else  
         {
-            printf("Bad list allocation");
-            exit(1);
+            tmp_node = next_node;
+            iter++;
         }
     }
 
