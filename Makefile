@@ -1,6 +1,6 @@
 CC = g++
 
-CFLAGS = -O3 
+CFLAGS = 
 
 SOURCES_DIR_TABLE = List/list_src
 SOURCES_DIR_LIST = HashTable/hash_table_src
