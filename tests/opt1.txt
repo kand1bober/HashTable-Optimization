@@ -206,3 +206,53 @@ Percent│                                                                      
        7,062537000 seconds user
        0,004999000 seconds sys
 
+
+
+===================================================================================================
++   62,49%    32,14%  hashtable  hashtable             [.] FastListFindNode(List*, int, char const*, int)
++   22,61%    13,16%  hashtable  hashtable             [.] MyStrcmp
++   22,34%    11,04%  hashtable  hashtable             [.] TableSearch(HashTable_t*, HashTable_t*, char const*, int, int*)
++   20,69%     6,70%  hashtable  hashtable             [.] IntrinCRC32(char const*, int)
++   15,93%    10,44%  hashtable  libc.so.6             [.] __memmove_avx_unaligned_erms
++   13,12%     9,33%  hashtable  libc.so.6             [.] __strncpy_avx2
++   12,67%     8,94%  hashtable  hashtable             [.] TableSearchTest(HashTable_t*, HashTable_t*, ProgConfig*)
++   10,16%     0,00%  hashtable  [unknown]             [k] 0x0000585118deb2a0
++   10,16%     0,00%  hashtable  hashtable             [.] main
+
+===================================================================================================
+
+
+
+
+===================================================================================================
+ Performance counter stats for './hashtable -runs 1 -searches 300':
+
+          7 064,57 msec task-clock                       #    1,000 CPUs utilized             
+                17      context-switches                 #    2,406 /sec                      
+                 4      cpu-migrations                   #    0,566 /sec                      
+             1 737      page-faults                      #  245,875 /sec                      
+    31 354 990 712      cycles                           #    4,438 GHz                       
+     2 408 981 132      stalled-cycles-frontend          #    7,68% frontend cycles idle      
+    36 567 814 923      instructions                     #    1,17  insn per cycle            
+                                                  #    0,07  stalled cycles per insn   
+     7 514 048 688      branches                         #    1,064 G/sec                     
+       295 274 882      branch-misses                    #    3,93% of all branches           
+
+       7,065169073 seconds time elapsed
+
+       7,060904000 seconds user
+       0,003999000 seconds sys
+
+       замеры: 
+       7 064,57
+       7 067,97
+       7 054,33
+       7 058,79
+       7 053,35
+       7 071,77
+       7 036,82
+       7 119,50
+       7 044,60
+
+===================================================================================================
+
