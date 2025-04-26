@@ -1,4 +1,5 @@
-        
+
+ без флага -O3   
 ===================================================================================================
 ./hashtable -runs 1 -searches 300
 
@@ -47,11 +48,44 @@
 
 
 
-
-
+ С флагом -O3    
 ===================================================================================================
++   73,27%    49,78%  hashtable  hashtable             [.] CRC32(char const*)                                              ◆
++   32,67%    15,26%  hashtable  libc.so.6             [.] __strcmp_avx2                                                   ▒
++   28,03%    12,19%  hashtable  hashtable             [.] ListFindNode(List*, char const*)                                ▒
++    9,31%     4,27%  hashtable  hashtable             [.] TableSearch(HashTable_t*, HashTable_t*, char const*, int*)      ▒
++    8,07%     5,16%  hashtable  libc.so.6             [.] __strncpy_avx2                                                  ▒
++    5,44%     2,52%  hashtable  libc.so.6             [.] __strlen_avx2                                                   ▒
++    4,40%     3,26%  hashtable  hashtable             [.] TableSearchTest(HashTable_t*, HashTable_t*, ProgConfig*)        ▒
++    2,44%     1,67%  hashtable  hashtable             [.] strcmp@plt                                                      
 
+ Performance counter stats for './hashtable -runs 1 -searches 300':
 
+         11 102,04 msec task-clock                       #    1,000 CPUs utilized             
+                42      context-switches                 #    3,783 /sec                      
+                 6      cpu-migrations                   #    0,540 /sec                      
+             1 752      page-faults                      #  157,809 /sec                      
+    49 297 679 362      cycles                           #    4,440 GHz                       
+     3 092 195 524      stalled-cycles-frontend          #    6,27% frontend cycles idle      
+    77 911 832 801      instructions                     #    1,58  insn per cycle            
+                                                  #    0,04  stalled cycles per insn   
+     9 472 946 306      branches                         #  853,261 M/sec                     
+       387 592 035      branch-misses                    #    4,09% of all branches           
+
+      11,102899283 seconds time elapsed
+
+      11,097436000 seconds user
+       0,004999000 seconds sys
+
+    замеры:
+    11 102,04
+    11 335,34
+    11 958,83
+    10 877,70
+    11 908,59
+    11 092,80
+    11 476,05
+    11 171,61
 ===================================================================================================
 
 
