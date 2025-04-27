@@ -210,7 +210,21 @@ $\quad$ Меня заинтересовал вопрос создания сво
 
 ### Изменение цикла поиска и небольшие корректировки работы с переменными: 
 ```C
+          7 149,04 msec task-clock                       #    0,999 CPUs utilized             
+               406      context-switches                 #   56,791 /sec                      
+                13      cpu-migrations                   #    1,818 /sec                      
+             1 738      page-faults                      #  243,110 /sec                      
+    31 693 805 878      cycles                           #    4,433 GHz                       
+     2 362 090 127      stalled-cycles-frontend          #    7,45% frontend cycles idle      
+    37 612 993 293      instructions                     #    1,19  insn per cycle            
+                                                         #    0,06  stalled cycles per insn   
+     8 205 095 887      branches                         #    1,148 G/sec                     
+       294 718 735      branch-misses                    #    3,59% of all branches           
 
+       7,157076956 seconds time elapsed
+
+       7,134149000 seconds user
+       0,015025000 seconds sys
 ```
 
 ```C
@@ -232,16 +246,43 @@ $\quad$ Меня заинтересовал вопрос создания сво
 
 ### Оптимизация функции Strlen: 
 ```C
+          7 064,57 msec task-clock                       #    1,000 CPUs utilized             
+                17      context-switches                 #    2,406 /sec                      
+                 4      cpu-migrations                   #    0,566 /sec                      
+             1 737      page-faults                      #  245,875 /sec                      
+    31 354 990 712      cycles                           #    4,438 GHz                       
+     2 408 981 132      stalled-cycles-frontend          #    7,68% frontend cycles idle      
+    36 567 814 923      instructions                     #    1,17  insn per cycle            
+                                                         #    0,07  stalled cycles per insn   
+     7 514 048 688      branches                         #    1,064 G/sec                     
+       295 274 882      branch-misses                    #    3,93% of all branches           
 
+       7,065169073 seconds time elapsed
+
+       7,060904000 seconds user
+       0,003999000 seconds sys
 ```
 
 ```C
-
+32,14%  hashtable  hashtable             [.] FastListFindNode(List*, int, char const*, int)
+13,16%  hashtable  hashtable             [.] MyStrcmp
+11,04%  hashtable  hashtable             [.] TableSearch(HashTable_t*, HashTable_t*, char const*, int, int*)
+ 6,70%  hashtable  hashtable             [.] IntrinCRC32(char const*, int)
+10,44%  hashtable  libc.so.6             [.] __memmove_avx_unaligned_erms
+ 9,33%  hashtable  libc.so.6             [.] __strncpy_avx2
+ 8,94%  hashtable  hashtable             [.] TableSearchTest(HashTable_t*, HashTable_t*, ProgConfig*)
+ 0,00%  hashtable  [unknown]             [k] 0x0000585118deb2a0
+ 0,00%  hashtable  hashtable             [.] main
 ```
 >Среднее время работы для одного цикла поиска всех данных, содержащихся в хеш-таблице:
 >
 > T = $(23.54 \pm 0.08)$ мc 
 
 # Сравнение результатов 
-
+    
+    |
+    || без оптимизаций | с флагом -O3 |  ||
+    || Текст | Текст ||
+    |
+    
 # Заключение
