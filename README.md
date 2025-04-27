@@ -135,6 +135,21 @@ $\quad$ Меня заинтересовал вопрос создания сво
 > T = $(37.88 \pm 1.31)$ мc 
 
 ### Следующим будем оптимизировать функцию CRC32:
+Перепишем функцию подсчёта хешша от входного слова. Будем использовать [интринсики](https://en.wikipedia.org/wiki/Intrinsic_function):
+```C
+uint32_t IntrinCRC32 (const char* word, int word_length)
+{ 
+    uint64_t crc_init = 0;
+    memcpy(&crc_init, word, word_length);
+
+    uint32_t key = _mm_crc32_u64(-1, crc_init);
+
+    return key;
+}
+```
+Пришлось разделить изначальную хеш-таблицу на две: со словами до 8 символов и со словами длиннее. Эта функция считает хеш для слов для 1-ой таблицы. Для слов длиннее хеш расчитывается изначальной функцией CRC32. 
+
+Результат оптимизации: 
 ```C
           9 593,07 msec task-clock                       #    1,000 CPUs utilized             
                 48      context-switches                 #    5,004 /sec                      
@@ -174,6 +189,45 @@ $\quad$ Меня заинтересовал вопрос создания сво
 > T = $(31.45 \pm 0.76)$ мc 
 
 ### Оптимизация функции Strcmp: 
+Переделаем функцию Strcmp. Для этого перепишем её на x86 ассемблере, скомпилируем nasm'ом и слинкуем с основной программой. 
+
+Код ассемблерноq функции Strcmp:
+
+```C
+section .data
+
+section .text
+    global MyStrcmp
+ 
+MyStrcmp:
+        mov     rax, rdi
+        mov     rdi, rdx
+        mov     edx, ecx
+        vmovdqu xmm0, [rax]
+        mov     eax, esi
+        vpcmpestri      xmm0, [rdi], 12
+        mov     eax, ecx
+        ret
+```
+
+Оптимизация основывается на том, что MyStrcmp работает со словами не длиннее 31 символа. Если слово длиннее, функция возвращает 32 и слово измеряется обычным strcmp. По дампу двух хеш-таблиц в csv-файл, я понял, что слов, длиннее 16 всего около 20 штук из 570 тысяч. Это значит, что branch predictor будет хороош предсказывать ветвление программы и заметного замедления за счёт конструкции if не произойдёт. Данные взяты для романа Властелин колец, все измерения производились на нём.   
+
+Также, как и в прошлом пункте, пришлось разделить таблицу на две. Пришлось также подкорректировать код оптимизированной функции CRC32, теперь она считает хеш для слов длинной до 16 символов:
+
+```C
+uint32_t IntrinCRC32 (const char* word, int word_length)
+{ 
+    uint64_t crc_init[2] = {0};
+    memcpy(crc_init, word, word_length);  
+    
+    uint32_t key = _mm_crc32_u64(-1, crc_init[0]);
+    key += _mm_crc32_u64(-1, crc_init[1]);
+
+    return key;
+}
+```
+
+Результат оптимизации:
 ```C
       9 086,10 msec task-clock                          #    1,000 CPUs utilized             
             45      context-switches                    #    4,953 /sec                      
@@ -209,6 +263,62 @@ $\quad$ Меня заинтересовал вопрос создания сво
 > T = $(30.25 \pm 0.21)$ мc 
 
 ### Изменение цикла поиска и небольшие корректировки работы с переменными: 
+Я заметил, что нкоторые циклы в моей программе устроены по глупому и замедляют программу. Основная идея в том, чтобы использовать цикл for по известному количеству итераций, вместо цикла while(1) с лишними проверками. Пример такого изменения в функции поиска по бакету:
+
+<details>
+<summary>Было:</summmary>
+
+```C
+int FastListFindNode (List_t* list, const char* string, int str_len)
+{
+    List_t* tmp_node = list->next;
+    List_t* next_node = nullptr;
+    int iter = 0;
+
+    while (1)
+    {   
+        next_node = tmp_node->next;
+
+        if (next_node)
+        {
+            if (tmp_node != list)
+            {
+                if ( (str_len == tmp_node->str_len) && 
+                     (!MyStrcmp(GET_NODE_DATA(tmp_node), tmp_node->str_len, string, str_len)) )
+                {
+                    return iter;
+                }
+                else  
+                {
+                    tmp_node = next_node;
+                    iter++;
+                }
+            }
+            else  
+            {
+                return -1;
+            }
+        }
+        else  
+        {
+            printf("Bad list allocation");
+            exit(1);
+        }
+    }
+
+    return -1;
+}
+```
+
+</details>
+
+<details>
+<summary>Стало:</summmary>
+```C
+
+```
+</details>
+
 ```C
           7 149,04 msec task-clock                       #    0,999 CPUs utilized             
                406      context-switches                 #   56,791 /sec                      
