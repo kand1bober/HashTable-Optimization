@@ -167,6 +167,22 @@ Performance counter stats for './hashtable -runs 30 -searches 10':
 ===================================================================================================
 В этом пункте напишу, что оптимизировал цикл поиска и нектоые детали:
 
+          7 149,04 msec task-clock                       #    0,999 CPUs utilized             
+               406      context-switches                 #   56,791 /sec                      
+                13      cpu-migrations                   #    1,818 /sec                      
+             1 738      page-faults                      #  243,110 /sec                      
+    31 693 805 878      cycles                           #    4,433 GHz                       
+     2 362 090 127      stalled-cycles-frontend          #    7,45% frontend cycles idle      
+    37 612 993 293      instructions                     #    1,19  insn per cycle            
+                                                         #    0,06  stalled cycles per insn   
+     8 205 095 887      branches                         #    1,148 G/sec                     
+       294 718 735      branch-misses                    #    3,59% of all branches           
+
+       7,157076956 seconds time elapsed
+
+       7,134149000 seconds user
+       0,015025000 seconds sys
+
 +   61,35%    31,19%  hashtable  hashtable             [.] FastListFindNode(List*, int, char const*, int)                 ◆
 +   22,16%    12,90%  hashtable  hashtable             [.] MyStrcmp                                                       ▒
 +   21,97%    10,27%  hashtable  hashtable             [.] TableSearch(HashTable_t*, HashTable_t*, char const*, int, int*)▒
