@@ -175,16 +175,16 @@ $\quad$ Меня заинтересовал вопрос создания сво
 
 ### Оптимизация функции Strcmp: 
 ```C
-      9 086,10 msec task-clock                       #    1,000 CPUs utilized             
-            45      context-switches                 #    4,953 /sec                      
-             4      cpu-migrations                   #    0,440 /sec                      
-         1 736      page-faults                      #  191,061 /sec                      
-40 345 302 963      cycles                           #    4,440 GHz                       
- 2 552 395 672      stalled-cycles-frontend          #    6,33% frontend cycles idle      
-43 704 537 579      instructions                     #    1,08  insn per cycle            
-                                                     #    0,06  stalled cycles per insn   
- 9 762 597 411      branches                         #    1,074 G/sec                     
-   325 784 012      branch-misses                    #    3,34% of all branches           
+      9 086,10 msec task-clock                          #    1,000 CPUs utilized             
+            45      context-switches                    #    4,953 /sec                      
+             4      cpu-migrations                      #    0,440 /sec                      
+         1 736      page-faults                         #  191,061 /sec                      
+40 345 302 963      cycles                              #    4,440 GHz                       
+ 2 552 395 672      stalled-cycles-frontend             #    6,33% frontend cycles idle      
+43 704 537 579      instructions                        #    1,08  insn per cycle            
+                                                        #    0,06  stalled cycles per insn   
+ 9 762 597 411      branches                            #    1,074 G/sec                     
+   325 784 012      branch-misses                       #    3,34% of all branches           
 
    9,086873566 seconds time elapsed
 
