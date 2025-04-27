@@ -269,45 +269,45 @@ uint32_t IntrinCRC32 (const char* word, int word_length)
 <summary>Было:</summmary>
 
 ```C
-int FastListFindNode (List_t* list, const char* string, int str_len)
-{
-    List_t* tmp_node = list->next;
-    List_t* next_node = nullptr;
-    int iter = 0;
+    int FastListFindNode (List_t* list, const char* string, int str_len)
+    {
+        List_t* tmp_node = list->next;
+        List_t* next_node = nullptr;
+        int iter = 0;
 
-    while (1)
-    {   
-        next_node = tmp_node->next;
+        while (1)
+        {   
+            next_node = tmp_node->next;
 
-        if (next_node)
-        {
-            if (tmp_node != list)
+            if (next_node)
             {
-                if ( (str_len == tmp_node->str_len) && 
-                     (!MyStrcmp(GET_NODE_DATA(tmp_node), tmp_node->str_len, string, str_len)) )
+                if (tmp_node != list)
                 {
-                    return iter;
+                    if ( (str_len == tmp_node->str_len) && 
+                        (!MyStrcmp(GET_NODE_DATA(tmp_node), tmp_node->str_len, string, str_len)) )
+                    {
+                        return iter;
+                    }
+                    else  
+                    {
+                        tmp_node = next_node;
+                        iter++;
+                    }
                 }
                 else  
                 {
-                    tmp_node = next_node;
-                    iter++;
+                    return -1;
                 }
             }
             else  
             {
-                return -1;
+                printf("Bad list allocation");
+                exit(1);
             }
         }
-        else  
-        {
-            printf("Bad list allocation");
-            exit(1);
-        }
-    }
 
-    return -1;
-}
+        return -1;
+    }
 ```
 
 </details>
