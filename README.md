@@ -65,7 +65,172 @@ $\quad$ Меня заинтересовал вопрос создания сво
 >- просмотр файла профиля, собранного последней коммандой perf record:
 >   - sudo perf report
 
-Профилируем первую версию программы, получаем результат времени работы и список узких мест программы: 
+Профилируем первую версию программы, получаем результат времени работы для 300 повторных поисков всех данных хеш-таблицы и список узких мест программы: 
+```C
+        17 107,72      msec task-clock                  #    1,000 CPUs utilized             
+               51      context-switches                 #    2,981 /sec                      
+               11      cpu-migrations                   #    0,643 /sec                      
+            1 754      page-faults                      #    102,527 /sec                      
+   75 914 920 025      cycles                           #    4,437 GHz                       
+    4 488 693 203      stalled-cycles-frontend          #    5,91% frontend cycles idle      
+  141 342 452 908      instructions                     #    1,86  insn per cycle            
+                                                        #    0,03  stalled cycles per insn   
+   17 642 784 292      branches                         #    1,031 G/sec                     
+      509 810 675      branch-misses                    #    2,89% of all branches           
+
+    17,108651614 seconds time elapsed
+
+    17,102121000 seconds user
+    0,005999000 seconds sys
+```
+
+```C
+ 0,00%  hashtable  hashtable             [.] _start
+ 0,00%  hashtable  libc.so.6             [.] __libc_start_main@@GLIBC_2.34
+ 0,00%  hashtable  libc.so.6             [.] __libc_start_call_main
+ 0,00%  hashtable  hashtable             [.] main
+ 2,80%  hashtable  hashtable             [.] TableSearchTest(HashTable_t*, HashTable_t*, ProgConfig*)
+ 3,68%  hashtable  hashtable             [.] TableSearch(HashTable_t*, HashTable_t*, char const*, int*)
+64,79%  hashtable  hashtable             [.] CRC32(char const*)
+11,71%  hashtable  hashtable             [.] ListFindNode(List*, char const*)
+ 7,24%  hashtable  libc.so.6             [.] __strcmp_avx2
+ 4,25%  hashtable  libc.so.6             [.] __strncpy_avx2
+ 1,64%  hashtable  libc.so.6             [.] __strlen_avx2
+```
+
+>Среднее время работы для одного цикла поиска всех данных, содержащихся в хеш-таблице:
+>
+> T = $(55.84 \pm 2.13)$ мc 
+### Первый этап это использование ключа оптимизаций -O3: 
+```C
+         11 102,04      msec task-clock                  #    1,000 CPUs utilized             
+                42      context-switches                 #    3,783 /sec                      
+                 6      cpu-migrations                   #    0,540 /sec                      
+             1 752      page-faults                      #  157,809 /sec                      
+    49 297 679 362      cycles                           #    4,440 GHz                       
+     3 092 195 524      stalled-cycles-frontend          #    6,27% frontend cycles idle      
+    77 911 832 801      instructions                     #    1,58  insn per cycle            
+                                                         #    0,04  stalled cycles per insn   
+     9 472 946 306      branches                         #  853,261 M/sec                     
+       387 592 035      branch-misses                    #    4,09% of all branches           
+
+      11,102899283 seconds time elapsed
+
+      11,097436000 seconds user
+       0,004999000 seconds sys
+```
+
+```C
+49,78%  hashtable  hashtable             [.] CRC32(char const*)                                       
+15,26%  hashtable  libc.so.6             [.] __strcmp_avx2                                             
+12,19%  hashtable  hashtable             [.] ListFindNode(List*, char const*)                          
+ 4,27%  hashtable  hashtable             [.] TableSearch(HashTable_t*, HashTable_t*, char const*, int*)
+ 5,16%  hashtable  libc.so.6             [.] __strncpy_avx2                                           
+ 2,52%  hashtable  libc.so.6             [.] __strlen_avx2                                           
+ 3,26%  hashtable  hashtable             [.] TableSearchTest(HashTable_t*, HashTable_t*, ProgConfig*)
+ 1,67%  hashtable  hashtable             [.] strcmp@plt                                                      
+```
+>Среднее время работы для одного цикла поиска всех данных, содержащихся в хеш-таблице:
+>
+> T = $(37.88 \pm 1.31)$ мc 
+
+### Следующим будем оптимизировать функцию CRC32:
+```C
+          9 593,07 msec task-clock                       #    1,000 CPUs utilized             
+                48      context-switches                 #    5,004 /sec                      
+                17      cpu-migrations                   #    1,772 /sec                      
+             1 738      page-faults                      #  181,173 /sec                      
+    42 407 496 442      cycles                           #    4,421 GHz                       
+     4 052 282 924      stalled-cycles-frontend          #    9,56% frontend cycles idle      
+    54 692 980 864      instructions                     #    1,29  insn per cycle            
+                                                         #    0,07  stalled cycles per insn   
+    11 771 524 422      branches                         #    1,227 G/sec                     
+       395 446 960      branch-misses                    #    3,36% of all branches           
+
+       9,594198352 seconds time elapsed
+
+       9,587646000 seconds user
+       0,005999000 seconds sys
+```
+
+```C
+22,01%  hashtable  libc.so.6             [.] __strcmp_avx2                                                   
+17,66%  hashtable  hashtable             [.] ListFindNode(List*, char const*)                                
+ 8,08%  hashtable  libc.so.6             [.] __strlen_avx2                                                  
+ 8,25%  hashtable  hashtable             [.] TableSearch(HashTable_t*, HashTable_t*, char const*, int*)      
+ 4,18%  hashtable  hashtable             [.] IntrinCRC32(char const*, int)                                   
+ 7,43%  hashtable  libc.so.6             [.] __strncpy_avx2                                                  
+ 0,00%  hashtable  [unknown]             [k] 0x000062040f3992a0                                              
+ 0,00%  hashtable  hashtable             [.] main                                                           
+ 6,60%  hashtable  libc.so.6             [.] __memmove_avx_unaligned_erms                                    
+ 5,97%  hashtable  hashtable             [.] CRC32(char const*)                                              
+ 4,80%  hashtable  hashtable             [.] TableSearchTest(HashTable_t*, HashTable_t*, ProgConfig*)        
+ 2,56%  hashtable  hashtable             [.] strcmp@plt                                                      
+ 2,71%  hashtable  hashtable             [.] strlen@plt                                                     
+ 1,71%  hashtable  libc.so.6             [.] __strncpy_chk         
+```
+>Среднее время работы для одного цикла поиска всех данных, содержащихся в хеш-таблице:
+>
+> T = $(31.45 \pm 0.76)$ мc 
+
+### Оптимизация функции Strcmp: 
+```C
+          9 086,10 msec task-clock                       #    1,000 CPUs utilized             
+                45      context-switches                 #    4,953 /sec                      
+                 4      cpu-migrations                   #    0,440 /sec                      
+             1 736      page-faults                      #  191,061 /sec                      
+    40 345 302 963      cycles                           #    4,440 GHz                       
+     2 552 395 672      stalled-cycles-frontend          #    6,33% frontend cycles idle      
+    43 704 537 579      instructions                     #    1,08  insn per cycle            
+                                                         #    0,06  stalled cycles per insn   
+     9 762 597 411      branches                         #    1,074 G/sec                     
+       325 784 012      branch-misses                    #    3,34% of all branches           
+
+       9,086873566 seconds time elapsed
+
+       9,081333000 seconds user
+       0,004999000 seconds sys    
+```
+
+```C
+30,22%  hashtable  hashtable             [.] FastListFindNode(List*, int, char const*, int)                 
+10,82%  hashtable  hashtable             [.] TableSearch(HashTable_t*, HashTable_t*, char const*, int*)     
+ 6,34%  hashtable  libc.so.6             [.] __strlen_avx2                                                  
+ 1,76%  hashtable  hashtable             [.] MyStrcmp                                                       
+ 6,44%  hashtable  hashtable             [.] IntrinCRC32(char const*, int)                                  
+ 8,91%  hashtable  libc.so.6             [.] __memmove_avx_unaligned_erms                                   
+ 8,90%  hashtable  libc.so.6             [.] __strncpy_avx2                                                 
+ 0,00%  hashtable  [unknown]             [k] 0x00005d902e4052a0                                             
+ 0,00%  hashtable  hashtable             [.] main                                                           
+ 5,22%  hashtable  hashtable             [.] TableSearchTest(HashTable_t*, HashTable_t*, ProgConfig*) 
+```
+>Среднее время работы для одного цикла поиска всех данных, содержащихся в хеш-таблице:
+>
+> T = $(30.25 \pm 0.21)$ мc 
+
+### Изменение цикла поиска и небольшие корректировки работы с переменными: 
+```C
+
+```
+
+```C
+31,19%  hashtable  hashtable             [.] FastListFindNode(List*, int, char const*, int)
+12,90%  hashtable  hashtable             [.] MyStrcmp                                      
+10,27%  hashtable  hashtable             [.] TableSearch(HashTable_t*, HashTable_t*, char const*, int, int*)
+ 6,36%  hashtable  hashtable             [.] IntrinCRC32(char const*, int)                           
+ 9,66%  hashtable  libc.so.6             [.] __memmove_avx_unaligned_erms                             
+ 0,05%  hashtable  libc.so.6             [.] __strncpy_avx2                                            
+ 0,00%  hashtable  [unknown]             [k] 0x00005e70e70072a0                                        
+ 0,00%  hashtable  hashtable             [.] main                                                      
+ 6,07%  hashtable  hashtable             [.] TableSearchTest(HashTable_t*, HashTable_t*, ProgConfig*) 
+ 3,09%  hashtable  libc.so.6             [.] __strlen_avx2                                            
+ 1,84%  hashtable  libc.so.6             [.] __strncpy_chk 
+```
+>Среднее время работы для одного цикла поиска всех данных, содержащихся в хеш-таблице:
+>
+> T = $(23.85 \pm 0.18)$ мc 
+
+### Оптимизация функции Strlen: 
 ```C
 
 ```
@@ -73,3 +238,10 @@ $\quad$ Меня заинтересовал вопрос создания сво
 ```C
 
 ```
+>Среднее время работы для одного цикла поиска всех данных, содержащихся в хеш-таблице:
+>
+> T = $(23.54 \pm 0.08)$ мc 
+
+# Сравнение результатов 
+
+# Заключение

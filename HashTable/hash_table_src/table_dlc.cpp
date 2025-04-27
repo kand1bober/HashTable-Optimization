@@ -165,13 +165,13 @@ HashTableInfo TableSearchTest (HashTable_t* fast_table, HashTable_t* slow_table,
     int runs = config->runs;
     int searches = config->searches;
 
-    uint64_t ticks_start = 0, ticks_end = 0;
+    // uint64_t ticks_start = 0, ticks_end = 0;
 
     printf("\n===============TESTS================\n"
             "runs: %d, searches: %d\n\n", config->runs, config->searches);
     for (int k = 0; k < runs; k++)
     {
-        ticks_start = __rdtsc();
+        // ticks_start = __rdtsc();
         for (int j = 0; j < searches; j++)
         {
             text_ptr = text_info.array;
@@ -185,9 +185,9 @@ HashTableInfo TableSearchTest (HashTable_t* fast_table, HashTable_t* slow_table,
                 text_ptr += word_length + 1;
             }
         }
-        ticks_end = __rdtsc();
+        // ticks_end = __rdtsc();
 
-        printf("%d time for one full run: %lu\n", k, (ticks_end - ticks_start) / searches );
+        // printf("%d time for one full run: %lu\n", k, (ticks_end - ticks_start) / searches );
     }
     printf("=====================================\n");
 
